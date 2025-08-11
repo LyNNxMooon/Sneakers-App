@@ -1,0 +1,116 @@
+import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+import 'package:sneakers_app/features/home_products/data/vos/sneaker_vo.dart';
+import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
+
+import '../../../../local_db/hive_dao.dart';
+import '../../../../network/api/api_constants.dart';
+import '../../../../utils/internet_connection_utils.dart';
+import '../../../../utils/log_util.dart';
+
+class FetchAndDisplaySneakers {
+  final HomeProductsRepo repository;
+
+  FetchAndDisplaySneakers(this.repository);
+
+  //Facade Pattern applies here
+  Future<SneakersResponse> call() async {
+    //(check if it is required to call api or just load from local db) attempt to load from db if possible
+    if (isRequiredToCallApi()) {
+      //check if internet is connected
+      if (await InternetConnectionUtils.instance.checkInternetConnection()) {
+        try {
+          final sneakersResponse =
+              await repository.fetchSneakers(kAuthToken, "sneakers", "Nike");
+
+          //checks if sneaker list is empty
+          if (sneakersResponse.data.isNotEmpty) {
+
+            //store in local db and return that cached data
+
+            LocalDbDAO.instance.saveLastFetchTime(lastFetchTime: DateTime.now());
+            LocalDbDAO.instance.saveSneakers(sneakers: sneakersResponse);
+
+            return LocalDbDAO.instance.getSneakers()!;
+          }
+          //attempt to load from local db is sneaker list is empty
+          else {
+            if (LocalDbDAO.instance.isCachedSneakersAvailable()) {
+              logger.d('Loading data from local db');
+
+              try {
+                return LocalDbDAO.instance.getSneakers()!;
+              } catch (error) {
+                return Future.error(error);
+              }
+            } //finally display error if local db is unavailable
+            else {
+              logger.e('No data in local db! Sneaker list is empty!');
+              return Future.error("No sneaker is available for now:(");
+            }
+          }
+        } catch (error) {
+          //attempt to load from local db if api calling is failed
+          if (LocalDbDAO.instance.isCachedSneakersAvailable()) {
+            logger.d('Loading data from local db');
+
+            try {
+              return LocalDbDAO.instance.getSneakers()!;
+            } catch (error) {
+              return Future.error(error);
+            }
+          } //finally display error if local db is unavailable
+          else {
+            logger.e('No data in local db! Fix your api calling!');
+            return Future.error("Error calling api to fetch sneakers: $error");
+          }
+        }
+      } //attempt to load from local db if no internet
+      else {
+        if (LocalDbDAO.instance.isCachedSneakersAvailable()) {
+          logger.d('Loading data from local db');
+
+          try {
+            return LocalDbDAO.instance.getSneakers()!;
+          } catch (error) {
+            return Future.error(error);
+          }
+        } //finally display error if local db is unavailable
+        else {
+          logger.e('No data in local db. Check the network and try again!');
+          return Future.error("Check your internet connection and try again!");
+        }
+      }
+    } //if not required to call api, load from local db
+    else {
+      logger.d('Loading data from local db');
+
+      try {
+        return LocalDbDAO.instance.getSneakers()!;
+      } catch (error) {
+        return Future.error(error);
+      }
+    }
+  }
+
+  //set up to check last fetch time from local db to see if it's needed to call API
+  bool isRequiredToCallApi() {
+    bool checkIfNeedsToLoadDataFromNetwork = true;
+
+    DateTime? lastFetchTime = LocalDbDAO.instance.getLastFetchTime();
+
+    if (LocalDbDAO.instance.isCachedLastFetchTimeAvailable() &&
+        LocalDbDAO.instance.isCachedSneakersAvailable()) {
+      final Duration timeSinceLastFetch =
+          DateTime.now().difference(lastFetchTime!);
+      if (timeSinceLastFetch.inHours > 5) {
+        checkIfNeedsToLoadDataFromNetwork = true;
+      } else {
+        checkIfNeedsToLoadDataFromNetwork = false;
+      }
+    } else {
+      checkIfNeedsToLoadDataFromNetwork = true;
+    }
+
+    return checkIfNeedsToLoadDataFromNetwork;
+  }
+}
