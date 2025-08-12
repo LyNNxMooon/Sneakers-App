@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_final_fields
 
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -53,40 +55,66 @@ class _IndexPageState extends State<IndexPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kPrimaryColor,
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: Container(
-        margin: EdgeInsets.symmetric(horizontal: 45, vertical: 60),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(25)),
-          color: Color.fromRGBO(139, 137, 137, 0.15),
-          boxShadow: [
-            BoxShadow(blurRadius: 20, color: Colors.black.withOpacity(.1)),
-          ],
-        ),
-        child: GNav(
-          style: GnavStyle.google,
-          rippleColor: const Color.fromARGB(96, 255, 254, 254),
-          hoverColor: const Color.fromARGB(255, 80, 78, 78),
-          activeColor: kThirdColor,
-          iconSize: 24,
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          duration: Duration(milliseconds: 400),
-          tabBackgroundColor: const Color.fromRGBO(128, 0, 0, 0),
-          color: kThirdColor,
-          tabs: [
-            GButton(icon: LineIcons.home, text: 'Home'),
-            GButton(icon: LineIcons.shoppingBag, text: 'Likes'),
-            GButton(icon: LineIcons.history, text: 'Search'),
-            GButton(icon: LineIcons.user, text: 'Profile'),
-          ],
-          selectedIndex: _selectedIndex,
-          onTabChange: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
+      body: Stack(
+        children: [
+          _screens[_selectedIndex],
+
+          // Floating Glass Nav Bar
+          Positioned(
+            left: 45,
+            right: 45,
+            bottom: 60,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1), // Slight opacity
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.2), // Subtle border
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 20,
+                        color: Colors.black.withOpacity(.1),
+                      ),
+                    ],
+                  ),
+                  child: GNav(
+                    backgroundColor: Colors.transparent,
+                    style: GnavStyle.google,
+
+                    rippleColor: Colors.white.withOpacity(0.1),
+                    hoverColor: Colors.white.withOpacity(0.05),
+                    activeColor: kThirdColor,
+                    iconSize: 24,
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    duration: const Duration(milliseconds: 400),
+                    tabBackgroundColor: Colors.white.withOpacity(0.25),
+                    color: kThirdColor,
+                    tabs: const [
+                      GButton(icon: LineIcons.home, text: 'Home'),
+                      GButton(icon: LineIcons.shoppingBag, text: 'Cart'),
+                      GButton(icon: LineIcons.history, text: 'Orders'),
+                      GButton(icon: LineIcons.user, text: 'Profile'),
+                    ],
+                    selectedIndex: _selectedIndex,
+                    onTabChange: (index) {
+                      setState(() {
+                        _selectedIndex = index;
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+
   }
 }

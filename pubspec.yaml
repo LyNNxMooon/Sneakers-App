@@ -49,6 +49,7 @@ dependencies:
   line_icons: ^2.0.3
   get_it: ^8.2.0
   flutter_bloc: ^9.1.1
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

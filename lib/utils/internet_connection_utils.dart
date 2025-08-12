@@ -5,19 +5,19 @@ class InternetConnectionUtils {
 
   static final InternetConnectionUtils _instance = InternetConnectionUtils._();
 
-  static  InternetConnectionUtils get instance => _instance;
+  static InternetConnectionUtils get instance => _instance;
 
   Future<bool> checkInternetConnection() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
+    var connectivityResults = await Connectivity().checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.none) {
-      return false; // Not connected to any network
-    } else if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi ||
-        connectivityResult == ConnectivityResult.vpn) {
-      return true; // Connected to either mobile data or Wi-Fi
+    if (connectivityResults.isNotEmpty) {
+      if (connectivityResults.contains(ConnectivityResult.mobile) ||
+          connectivityResults.contains(ConnectivityResult.wifi) ||
+          connectivityResults.contains(ConnectivityResult.vpn)) {
+        return true; // Connected to either mobile data, Wi-Fi, or VPN
+      }
     }
 
-    return false; // Default to not connected
+    return false; // Not connected
   }
 }

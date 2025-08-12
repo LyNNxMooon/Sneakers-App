@@ -96,7 +96,7 @@ class LocalDbDAO {
   //Check If data is available
   bool isCachedSneakersAvailable() {
     try {
-      return _sneakersBox().isEmpty;
+      return _sneakersBox().isNotEmpty;
     } catch (error) {
       logger
           .e('Error checking if sneakers are available from local db: $error');
@@ -106,7 +106,7 @@ class LocalDbDAO {
 
   bool isCachedLastFetchTimeAvailable() {
     try {
-      return _timeLastFetchBox().isEmpty;
+      return _timeLastFetchBox().isNotEmpty;
     } catch (error) {
       logger.e(
           'Error checking if last fetch time is available from local db: $error');
@@ -116,7 +116,7 @@ class LocalDbDAO {
 
   bool isCachedLastLoadedPageAvailable() {
     try {
-      return _sneakerPageBox().isEmpty;
+      return _sneakerPageBox().isNotEmpty;
     } catch (error) {
       logger.e(
           'Error checking if last loaded page is available from local db: $error');

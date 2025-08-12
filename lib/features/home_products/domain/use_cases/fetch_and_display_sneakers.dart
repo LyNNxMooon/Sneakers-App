@@ -43,6 +43,7 @@ class FetchAndDisplaySneakers {
               logger.d('Loading data from local db');
 
               try {
+                logger.d('Cached data Loaded!');
                 return LocalDbDAO.instance.getSneakers()!;
               } catch (error) {
                 return Future.error(error);
@@ -59,6 +60,7 @@ class FetchAndDisplaySneakers {
             logger.d('Loading data from local db');
 
             try {
+              logger.d('Cached data Loaded!');
               return LocalDbDAO.instance.getSneakers()!;
             } catch (error) {
               return Future.error(error);
@@ -75,6 +77,7 @@ class FetchAndDisplaySneakers {
           logger.d('Loading data from local db');
 
           try {
+            logger.d('Cached data Loaded!');
             return LocalDbDAO.instance.getSneakers()!;
           } catch (error) {
             return Future.error(error);
@@ -90,8 +93,11 @@ class FetchAndDisplaySneakers {
       logger.d('Loading data from local db');
 
       try {
+        logger.d(
+            'Not required to call api since last time loaded is within 5 hours! Cached data Loaded!');
         return LocalDbDAO.instance.getSneakers()!;
       } catch (error) {
+        logger.e('No data in local db! Sneaker list is empty!');
         return Future.error(error);
       }
     }
