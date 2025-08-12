@@ -1,5 +1,4 @@
 import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
-import 'package:sneakers_app/features/home_products/data/vos/sneaker_vo.dart';
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 
 import '../../../../local_db/hive_dao.dart';
@@ -13,22 +12,28 @@ class FetchAndDisplaySneakers {
   FetchAndDisplaySneakers(this.repository);
 
   //Facade Pattern applies here
-  Future<SneakersResponse> call() async {
+  Future<SneakersResponse> call(int page) async {
     //(check if it is required to call api or just load from local db) attempt to load from db if possible
-    if (isRequiredToCallApi()) {
+    if (isRequiredToCallApi(page)) {
       //check if internet is connected
       if (await InternetConnectionUtils.instance.checkInternetConnection()) {
         try {
-          final sneakersResponse =
-              await repository.fetchSneakers(kAuthToken, "sneakers", "Nike");
+          int callingPage = pageAvailable() == null
+              ? page
+              : page > num.parse(pageAvailable().toString())
+                  ? 1
+                  : page;
+
+          final sneakersResponse = await repository.fetchSneakers(
+              kAuthToken, "sneakers", "Nike", callingPage);
 
           //checks if sneaker list is empty
           if (sneakersResponse.data.isNotEmpty) {
-
             //store in local db and return that cached data
-
-            LocalDbDAO.instance.saveLastFetchTime(lastFetchTime: DateTime.now());
+            LocalDbDAO.instance
+                .saveLastFetchTime(lastFetchTime: DateTime.now());
             LocalDbDAO.instance.saveSneakers(sneakers: sneakersResponse);
+            LocalDbDAO.instance.saveLastLoadedSneakerPage(page: callingPage);
 
             return LocalDbDAO.instance.getSneakers()!;
           }
@@ -92,14 +97,24 @@ class FetchAndDisplaySneakers {
     }
   }
 
+  //Providing cached data to display while loading
+  Future<SneakersResponse?> getCachedSneakersWhileLoading() async {
+    try {
+      return LocalDbDAO.instance.getSneakers();
+    } catch (error) {
+      return null;
+    }
+  }
+
   //set up to check last fetch time from local db to see if it's needed to call API
-  bool isRequiredToCallApi() {
+  bool isRequiredToCallApi(int page) {
     bool checkIfNeedsToLoadDataFromNetwork = true;
 
     DateTime? lastFetchTime = LocalDbDAO.instance.getLastFetchTime();
 
     if (LocalDbDAO.instance.isCachedLastFetchTimeAvailable() &&
-        LocalDbDAO.instance.isCachedSneakersAvailable()) {
+        LocalDbDAO.instance.isCachedSneakersAvailable() &&
+        page == LocalDbDAO.instance.getSneakers()?.meta.currentPage) {
       final Duration timeSinceLastFetch =
           DateTime.now().difference(lastFetchTime!);
       if (timeSinceLastFetch.inHours > 5) {
@@ -112,5 +127,15 @@ class FetchAndDisplaySneakers {
     }
 
     return checkIfNeedsToLoadDataFromNetwork;
+  }
+
+  //Available page calculation
+  int? pageAvailable() {
+    if (LocalDbDAO.instance.isCachedSneakersAvailable()) {
+      return LocalDbDAO.instance.getSneakers()!.meta.total ~/
+          LocalDbDAO.instance.getSneakers()!.meta.perPage;
+    } else {
+      return null;
+    }
   }
 }

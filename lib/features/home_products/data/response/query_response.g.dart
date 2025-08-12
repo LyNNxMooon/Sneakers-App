@@ -18,17 +18,20 @@ class QueryResponseAdapter extends TypeAdapter<QueryResponse> {
     };
     return QueryResponse(
       category: fields[0] as String,
-      productType: fields[1] as String,
+      page: fields[1] as String?,
+      productType: fields[2] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, QueryResponse obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.category)
       ..writeByte(1)
+      ..write(obj.page)
+      ..writeByte(2)
       ..write(obj.productType);
   }
 
@@ -50,11 +53,13 @@ class QueryResponseAdapter extends TypeAdapter<QueryResponse> {
 QueryResponse _$QueryResponseFromJson(Map<String, dynamic> json) =>
     QueryResponse(
       category: json['category'] as String,
+      page: json['page'] as String?,
       productType: json['product_type'] as String,
     );
 
 Map<String, dynamic> _$QueryResponseToJson(QueryResponse instance) =>
     <String, dynamic>{
       'category': instance.category,
+      'page': instance.page,
       'product_type': instance.productType,
     };

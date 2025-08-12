@@ -11,10 +11,12 @@ class QueryResponse {
   @HiveField(0)
   final String category;
   @HiveField(1)
+  final String? page;
+  @HiveField(2)
   @JsonKey(name: 'product_type')
   final String productType;
 
-  QueryResponse({required this.category, required this.productType});
+  QueryResponse({required this.category, required this.page,required this.productType});
 
   factory QueryResponse.fromJson(Map<String, dynamic> json) =>
       _$QueryResponseFromJson(json);

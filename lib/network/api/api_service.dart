@@ -16,5 +16,6 @@ abstract class ApiService {
   Future<SneakersResponse> fetchSneakers(
       @Header(kAuthorizationKey) String token,
       @Query(kQueryParamKeyForProductType) String productType,
-      @Query(kQueryParamKeyForCategory) String category);
+      @Query(kQueryParamKeyForCategory) String category,
+      @Query(kQueryParamKeyForPage) int page);
 }

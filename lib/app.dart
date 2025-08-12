@@ -1,27 +1,33 @@
 // ignore_for_file: prefer_final_fields
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:sneakers_app/constants/colors.dart';
 import 'package:sneakers_app/features/cart/presentation/screens/cart_screen.dart';
+import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_bloc.dart';
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
+import 'package:sneakers_app/utils/dependency_injection_utils.dart';
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Sneakers App",
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: "Urbanist"),
-      home: const IndexPage(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeSneakersBloc>(
+          create: (_) =>
+          sl<HomeSneakersBloc>(),
+        ),
+      ],
+      child: MaterialApp(
+        title: "Sneakers App",
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(fontFamily: "Urbanist"),
+        home: const IndexPage(),
+      ),
     );
   }
 }
@@ -59,10 +65,8 @@ class _IndexPageState extends State<IndexPage> {
         ),
         child: GNav(
           style: GnavStyle.google,
-
           rippleColor: const Color.fromARGB(96, 255, 254, 254),
           hoverColor: const Color.fromARGB(255, 80, 78, 78),
-
           activeColor: kThirdColor,
           iconSize: 24,
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),

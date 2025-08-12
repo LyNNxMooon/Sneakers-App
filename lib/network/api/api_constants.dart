@@ -8,6 +8,7 @@ const kEndPointForSneakers = "/stockx/products";
 const kAuthorizationKey = "Authorization";
 const kQueryParamKeyForProductType = "product_type";
 const kQueryParamKeyForCategory = "category";
+const kQueryParamKeyForPage = "page";
 
 //Auth Token (For testing purpose only)
 const kAuthToken = "";
