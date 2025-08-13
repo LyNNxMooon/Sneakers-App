@@ -13,11 +13,7 @@ Future<void> init() async {
   //Registering dependencies
 
   //Blocs
-  sl.registerFactory(() => HomeSneakersBloc(fetchAndDisplaySneakers: sl())
-    ..add(FetchHomeSneakers(
-        page: LocalDbDAO.instance.getLastLoadedSneakerPage() == null
-            ? 1
-            : LocalDbDAO.instance.getLastLoadedSneakerPage()!)));
+  sl.registerFactory(() => HomeSneakersBloc(fetchAndDisplaySneakers: sl()));
 
   //Repos
   sl.registerLazySingleton<HomeProductsRepo>(() => FetchingSneakersModel());

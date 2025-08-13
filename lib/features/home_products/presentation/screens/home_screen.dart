@@ -9,6 +9,7 @@ import 'package:sneakers_app/features/home_products/presentation/widgets/app_bar
 import '../widgets/home_sneakers_list.dart';
 import '../widgets/sneaker_search_box.dart';
 import '../widgets/sneakers_loading_widget.dart';
+import '../widgets/title_and_page_setting.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,45 +40,76 @@ class _HomeScreenState extends State<HomeScreen> {
         const Gap(20),
         searchFieldWidgetsRow(),
         const Gap(40),
-        BlocBuilder<HomeSneakersBloc, HomeSneakersState>(
-          builder: (_, state) {
-            //loading
-            if (state is HomeSneakersLoading) {
-              return (state.sneakers == null)
-                  ? SneakersLoadingWidget()
-                  : HomeSneakersList(
-                      sneakersList: state.sneakers!.data,
-                    );
-            }
-
-            //Error
-            if (state is HomeSneakersError) {
-              return Padding(
-                padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.5 - 220),
-                child: Center(
-                  child: Text(state.errorMessage),
-                ),
-              );
-            }
-
-            //Success
-            if (state is HomeSneakersLoaded) {
-              return HomeSneakersList(
-                sneakersList: state.sneakers.data,
-              );
-            }
-
-            return SizedBox();
-          },
-        )
+        titleAndPageSettingWidget(),
+        sneakersListWidget()
       ],
+    );
+  }
+
+  Widget titleAndPageSettingWidget() {
+    return BlocBuilder<HomeSneakersBloc, HomeSneakersState>(
+      builder: (_, state) {
+        //loading
+        if (state is HomeSneakersLoading) {
+          return (state.sneakers == null)
+              ? TitleAndPageSettingLoadingWidget()
+              : TitleAndPageSetting(
+                  sneakerResponse: state.sneakers!,
+                );
+        }
+
+        //Success
+
+        if (state is HomeSneakersLoaded) {
+          return TitleAndPageSetting(
+            sneakerResponse: state.sneakers,
+          );
+        }
+
+
+        return SizedBox();
+      },
+    );
+  }
+
+  Widget sneakersListWidget() {
+    return BlocBuilder<HomeSneakersBloc, HomeSneakersState>(
+      builder: (_, state) {
+        //loading
+        if (state is HomeSneakersLoading) {
+          return (state.sneakers == null)
+              ? SneakersLoadingWidget()
+              : HomeSneakersList(
+                  sneakersList: state.sneakers!.data,
+                );
+        }
+
+        //Error
+        if (state is HomeSneakersError) {
+          return Padding(
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).size.height * 0.5 - 220),
+            child: Center(
+              child: Text(state.errorMessage),
+            ),
+          );
+        }
+
+        //Success
+        if (state is HomeSneakersLoaded) {
+          return HomeSneakersList(
+            sneakersList: state.sneakers.data,
+          );
+        }
+
+        return SizedBox();
+      },
     );
   }
 
   Widget searchFieldWidgetsRow() {
     return Padding(
-      padding: EdgeInsets.only(left: 15, right: 5),
+      padding: EdgeInsets.only(left: 12, right: 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [

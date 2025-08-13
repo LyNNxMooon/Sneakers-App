@@ -12,6 +12,9 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
 import 'package:sneakers_app/utils/dependency_injection_utils.dart';
 
+import 'features/home_products/presentation/BLoC/home_sneakers_event.dart';
+import 'local_db/hive_dao.dart';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -20,8 +23,11 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<HomeSneakersBloc>(
-          create: (_) =>
-          sl<HomeSneakersBloc>(),
+          create: (_) => sl<HomeSneakersBloc>()
+            ..add(FetchHomeSneakers(
+                page: LocalDbDAO.instance.getLastLoadedSneakerPage() == null
+                    ? 1
+                    : LocalDbDAO.instance.getLastLoadedSneakerPage()!)),
         ),
       ],
       child: MaterialApp(
@@ -85,13 +91,12 @@ class _IndexPageState extends State<IndexPage> {
                   child: GNav(
                     backgroundColor: Colors.transparent,
                     style: GnavStyle.google,
-
                     rippleColor: Colors.white.withOpacity(0.1),
                     hoverColor: Colors.white.withOpacity(0.05),
                     activeColor: kThirdColor,
                     iconSize: 24,
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
                     duration: const Duration(milliseconds: 400),
                     tabBackgroundColor: Colors.white.withOpacity(0.25),
                     color: kThirdColor,
@@ -115,6 +120,5 @@ class _IndexPageState extends State<IndexPage> {
         ],
       ),
     );
-
   }
 }

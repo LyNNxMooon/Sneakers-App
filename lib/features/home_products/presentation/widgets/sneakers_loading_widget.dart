@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:shimmer/shimmer.dart';
@@ -52,6 +53,76 @@ class SneakersLoadingWidget extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TitleAndPageSettingLoadingWidget extends StatelessWidget {
+  const TitleAndPageSettingLoadingWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(right: 15, left: 17, bottom: 30),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Shimmer.fromColors(
+            baseColor: Colors.grey.shade300,
+            highlightColor: Colors.grey.shade100,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  width: 50,
+                  height: 10,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      border: Border.all(width: 1.5),
+                      borderRadius: BorderRadius.circular(3)),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 10),
+                  width: 130,
+                  height: 10,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      border: Border.all(width: 1.5),
+                      borderRadius: BorderRadius.circular(3)),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            //padding: EdgeInsets.symmetric(horizontal: 10),
+            width: 135,
+            height: 35,
+            decoration: BoxDecoration(
+                border: Border.all(width: 0.8),
+                borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    CupertinoIcons.chevron_down,
+                    size: 16,
+                  ),
+                ),
+                CupertinoActivityIndicator(radius: 8,),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    CupertinoIcons.chevron_up,
+                    size: 16,
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

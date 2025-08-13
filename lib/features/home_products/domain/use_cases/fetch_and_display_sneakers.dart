@@ -18,6 +18,9 @@ class FetchAndDisplaySneakers {
       //check if internet is connected
       if (await InternetConnectionUtils.instance.checkInternetConnection()) {
         try {
+
+          logger.d('Loading data from API');
+
           int callingPage = pageAvailable() == null
               ? page
               : page > num.parse(pageAvailable().toString())

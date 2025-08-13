@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sneakers_app/features/home_products/data/vos/sneaker_vo.dart';
@@ -68,10 +69,7 @@ class HomeSneakersList extends StatelessWidget {
                     ),
                     child: CachedNetworkImage(
                       imageUrl: sneaker.image,
-                      placeholder: (_, url) => Image.asset(
-                        placeholderSampleSneaker,
-                        fit: BoxFit.cover,
-                      ),
+                      placeholder: (_, url) => CupertinoActivityIndicator(radius: 15,),
                       errorWidget: (_, url, error) => Image.asset(
                         placeholderSampleSneaker,
                         fit: BoxFit.cover,
@@ -84,8 +82,8 @@ class HomeSneakersList extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  sneaker.title.length > 35
-                      ? "${sneaker.title.substring(0, 35)} ..."
+                  sneaker.title.length > 30
+                      ? "${sneaker.title.substring(0, 30)} ..."
                       : sneaker.title,
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
