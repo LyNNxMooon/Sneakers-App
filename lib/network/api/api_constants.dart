@@ -11,4 +11,4 @@ const kQueryParamKeyForCategory = "category";
 const kQueryParamKeyForPage = "page";
 
 //Auth Token (For testing purpose only)
-const kAuthToken = "";
+const kAuthToken = "sd_DfkPaWjkaQTeSlhdxpD92nw4c6eI7CYS";
