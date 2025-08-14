@@ -26,7 +26,7 @@ class HomeSneakersList extends StatelessWidget {
               crossAxisCount: columnCount,
               mainAxisSpacing: 15,
               crossAxisSpacing: 15,
-              childAspectRatio: 0.75),
+              childAspectRatio: 0.7),
           itemBuilder: (context, index) => itemCard(sneakersList[index], index),
           itemCount: sneakersList.length,
         ),
@@ -69,7 +69,9 @@ class HomeSneakersList extends StatelessWidget {
                     ),
                     child: CachedNetworkImage(
                       imageUrl: sneaker.image,
-                      placeholder: (_, url) => CupertinoActivityIndicator(radius: 15,),
+                      placeholder: (_, url) => CupertinoActivityIndicator(
+                        radius: 15,
+                      ),
                       errorWidget: (_, url, error) => Image.asset(
                         placeholderSampleSneaker,
                         fit: BoxFit.cover,
@@ -135,12 +137,18 @@ class HomeSneakersList extends StatelessWidget {
                   ],
                 ),
               ),
-              const Gap(10),
+              const Gap(20),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 22),
-                child: Text(
-                  "\$120.89",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+                padding: EdgeInsets.only(left: 22, right: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "\$120.89",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    Icon(Icons.add_shopping_cart, size: 20,)
+                  ],
                 ),
               )
             ],

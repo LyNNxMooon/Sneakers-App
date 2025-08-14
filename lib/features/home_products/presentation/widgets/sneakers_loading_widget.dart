@@ -22,7 +22,7 @@ class SneakersLoadingWidget extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             crossAxisCount: columnCount,
-            childAspectRatio: 0.9,
+            childAspectRatio: 0.7,
             children: List.generate(
               12,
               (int index) {
