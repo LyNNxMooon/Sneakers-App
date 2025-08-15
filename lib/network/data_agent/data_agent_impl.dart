@@ -21,10 +21,10 @@ class DataAgentImpl implements DataAgent {
 
   @override
   Future<SneakersResponse> fetchSneakers(
-      String token, String productType, String category, int page) async {
+      String token, String productType, String category, int page, int limit) async {
     try {
       return await _apiService
-          .fetchSneakers('Bearer $token', productType, category, page)
+          .fetchSneakers('Bearer $token', productType, category, page, limit)
           .asStream()
           .map((event) => event)
           .first;

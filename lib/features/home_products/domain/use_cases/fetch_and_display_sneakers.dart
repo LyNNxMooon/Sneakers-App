@@ -28,7 +28,7 @@ class FetchAndDisplaySneakers {
                   : page;
 
           final sneakersResponse = await repository.fetchSneakers(
-              kAuthToken, "sneakers", "Nike", callingPage);
+              kAuthToken, "sneakers", "Nike", callingPage, 20);
 
           //checks if sneaker list is empty
           if (sneakersResponse.data.isNotEmpty) {

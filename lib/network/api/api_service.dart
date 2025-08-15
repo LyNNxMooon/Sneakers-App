@@ -17,5 +17,6 @@ abstract class ApiService {
       @Header(kAuthorizationKey) String token,
       @Query(kQueryParamKeyForProductType) String productType,
       @Query(kQueryParamKeyForCategory) String category,
-      @Query(kQueryParamKeyForPage) int page);
+      @Query(kQueryParamKeyForPage) int page,
+      @Query(kQueryParamKeyForLimit) int limit);
 }

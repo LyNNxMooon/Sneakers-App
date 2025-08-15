@@ -29,12 +29,14 @@ class _ApiService implements ApiService {
     String productType,
     String category,
     int page,
+    int limit,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'product_type': productType,
       r'category': category,
       r'page': page,
+      r'limit': limit,
     };
     final _headers = <String, dynamic>{
       r'Accept': 'application/json',

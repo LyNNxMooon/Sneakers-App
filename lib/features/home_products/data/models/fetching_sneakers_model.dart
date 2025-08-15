@@ -8,10 +8,10 @@ class FetchingSneakersModel implements HomeProductsRepo {
 
   @override
   Future<SneakersResponse> fetchSneakers(
-      String token, String productType, String category, int page) async {
+      String token, String productType, String category, int page, int limit) async {
     try {
       return await DataAgentImpl.instance
-          .fetchSneakers(token, productType, category, page);
+          .fetchSneakers(token, productType, category, page, limit);
     } on Exception catch (error) {
       return Future.error(error);
     }

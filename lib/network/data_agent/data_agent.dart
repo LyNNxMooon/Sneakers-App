@@ -2,5 +2,5 @@ import 'package:sneakers_app/features/home_products/data/response/sneakers_respo
 
 abstract class DataAgent {
 
-  Future<SneakersResponse> fetchSneakers(String token, String productType, String category, int page);
+  Future<SneakersResponse> fetchSneakers(String token, String productType, String category, int page, int limit);
 }
