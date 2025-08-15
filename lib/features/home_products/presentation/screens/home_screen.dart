@@ -66,7 +66,6 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-
         return SizedBox();
       },
     );
@@ -140,9 +139,20 @@ class _HomeScreenState extends State<HomeScreen> {
               label: "Sku",
             ),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.search),
+          BlocBuilder<HomeSneakersBloc, HomeSneakersState>(
+            builder: (_, state) {
+              if (state is HomeSneakersLoaded) {
+                return IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.search),
+                );
+              }
+
+              return IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.search),
+              );
+            },
           )
         ],
       ),

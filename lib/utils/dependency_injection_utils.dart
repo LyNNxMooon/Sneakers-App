@@ -20,4 +20,5 @@ Future<void> init() async {
 
   //Use cases
   sl.registerLazySingleton(() => FetchAndDisplaySneakers(sl()));
+  sl.registerLazySingleton(() => HomeSneakerSearchService(sl()));
 }
