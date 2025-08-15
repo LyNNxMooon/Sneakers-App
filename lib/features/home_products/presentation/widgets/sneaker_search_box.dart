@@ -19,11 +19,13 @@ class SneakerSearchBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
         controller: controller,
+        style: TextStyle(fontSize: 12),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: const TextStyle(fontSize: 12),
           labelText: label,
           labelStyle: const TextStyle(color: kThirdColor, fontSize: 12),
+
           focusedBorder: OutlineInputBorder(
               borderSide: const BorderSide(width: 2, color: kThirdColor),
               borderRadius: BorderRadius.circular(18)),

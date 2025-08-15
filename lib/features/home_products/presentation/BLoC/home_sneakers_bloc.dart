@@ -12,13 +12,18 @@ class HomeSneakersBloc extends Bloc<HomeSneakersEvent, HomeSneakersState> {
     on<FetchHomeSneakers>(_onFetchHomeSneakers);
   }
 
+
   Future<void> _onFetchHomeSneakers(
       FetchHomeSneakers event, Emitter<HomeSneakersState> emit) async {
     emit(HomeSneakersLoading(
         await fetchAndDisplaySneakers.getCachedSneakersWhileLoading()));
 
     try {
-      final sneakersResponse = await fetchAndDisplaySneakers(event.page);
+      final sneakersResponse = await fetchAndDisplaySneakers(event.page,
+          isSearching: event.isSearching,
+          model: event.model,
+          sku: event.sku,
+          title: event.title);
 
       emit(HomeSneakersLoaded(sneakersResponse));
     } catch (error) {

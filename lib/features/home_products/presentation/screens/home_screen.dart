@@ -6,6 +6,8 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 
 import 'package:sneakers_app/features/home_products/presentation/widgets/app_bar_session.dart';
 
+import '../../../../local_db/hive_dao.dart';
+import '../BLoC/home_sneakers_event.dart';
 import '../widgets/home_sneakers_list.dart';
 import '../widgets/sneaker_search_box.dart';
 import '../widgets/sneakers_loading_widget.dart';
@@ -125,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 45,
             width: (MediaQuery.of(context).size.width - 30) * 0.2,
             child: SneakerSearchBox(
-              controller: _sneakerTitleController,
+              controller: _sneakerModelController,
               hintText: "Model..",
               label: "Model",
             ),
@@ -134,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: 45,
             width: (MediaQuery.of(context).size.width - 30) * 0.25,
             child: SneakerSearchBox(
-              controller: _sneakerTitleController,
+              controller: _sneakerSkuController,
               hintText: "Sku..",
               label: "Sku",
             ),
@@ -143,7 +145,15 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (_, state) {
               if (state is HomeSneakersLoaded) {
                 return IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.read<HomeSneakersBloc>().add(FetchHomeSneakers(
+                        page:
+                            LocalDbDAO.instance.getLastLoadedSneakerPage() ?? 1,
+                        isSearching: true,
+                        title: _sneakerTitleController.text,
+                        sku: _sneakerSkuController.text,
+                        model: _sneakerModelController.text));
+                  },
                   icon: Icon(Icons.search),
                 );
               }

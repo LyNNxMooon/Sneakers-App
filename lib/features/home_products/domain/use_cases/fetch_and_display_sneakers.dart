@@ -167,30 +167,27 @@ class FetchAndDisplaySneakers {
 //Searching home sneakers
 
 class HomeSneakerSearchService {
-  final SneakersResponse _allSneakers;
-
   //Pre-sorted lists for each query
-  late final List<SneakerVO> _sneakersByTitle;
-  late final List<SneakerVO> _sneakersByModel;
-  late final List<SneakerVO> _sneakersBySku;
+  List<SneakerVO> _sneakersByTitle = [];
+  List<SneakerVO> _sneakersByModel = [];
+  List<SneakerVO> _sneakersBySku = [];
 
   //Normalize to lower-case
   static String _norm(String s) => s.toLowerCase().trim();
 
-  HomeSneakerSearchService(SneakersResponse sneakersResponse)
-      : _allSneakers = sneakersResponse {
-    _sneakersByTitle = List.of(_allSneakers.data)
-      ..sort((a, b) => _norm(a.title).compareTo(_norm(b.title)));
-
-    _sneakersByModel = List.of(_allSneakers.data)
-      ..sort((a, b) => _norm(a.model).compareTo(_norm(b.model)));
-
-    _sneakersBySku = List.of(_allSneakers.data)
-      ..sort((a, b) => _norm(a.sku).compareTo(_norm(b.sku)));
-  }
-
   //Applying Search Method
   SneakersResponse search(String title, String model, String sku) {
+    final SneakersResponse allSneakers = LocalDbDAO.instance.getSneakers()!;
+
+    _sneakersByTitle = List.of(allSneakers.data)
+      ..sort((a, b) => _norm(a.title).compareTo(_norm(b.title)));
+
+    _sneakersByModel = List.of(allSneakers.data)
+      ..sort((a, b) => _norm(a.model).compareTo(_norm(b.model)));
+
+    _sneakersBySku = List.of(allSneakers.data)
+      ..sort((a, b) => _norm(a.sku).compareTo(_norm(b.sku)));
+
     final normalizedTitle = _norm(title);
     final normalizedModel = _norm(model);
     final normalizedSku = _norm(sku);
@@ -199,7 +196,8 @@ class HomeSneakerSearchService {
         normalizedModel.isEmpty &&
         normalizedSku.isEmpty) {
       // Return all sneakers if search is empty
-      return _allSneakers;
+      logger.d("search query is empty, returning all sneakers!");
+      return allSneakers;
     }
 
     Set<SneakerVO> results = {};
@@ -237,9 +235,9 @@ class HomeSneakerSearchService {
 
     return SneakersResponse(
         data: results.toList(),
-        status: _allSneakers.status,
-        query: _allSneakers.query,
-        meta: _allSneakers.meta);
+        status: allSneakers.status,
+        query: allSneakers.query,
+        meta: allSneakers.meta);
   }
 
   //Helper to perform binary search
