@@ -146,13 +146,10 @@ class _HomeScreenState extends State<HomeScreen> {
               if (state is HomeSneakersLoaded) {
                 return IconButton(
                   onPressed: () {
-                    context.read<HomeSneakersBloc>().add(FetchHomeSneakers(
-                        page:
-                            LocalDbDAO.instance.getLastLoadedSneakerPage() ?? 1,
-                        isSearching: true,
+                    context.read<HomeSneakersBloc>().add(SearchHomeSneakers(
                         title: _sneakerTitleController.text,
-                        sku: _sneakerSkuController.text,
-                        model: _sneakerModelController.text));
+                        model: _sneakerModelController.text,
+                        sku: _sneakerSkuController.text));
                   },
                   icon: Icon(Icons.search),
                 );
