@@ -6,7 +6,6 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 
 import 'package:sneakers_app/features/home_products/presentation/widgets/app_bar_session.dart';
 
-import '../../../../local_db/hive_dao.dart';
 import '../BLoC/home_sneakers_event.dart';
 import '../widgets/home_sneakers_list.dart';
 import '../widgets/sneaker_search_box.dart';
@@ -91,7 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.only(
                 top: MediaQuery.of(context).size.height * 0.5 - 220),
             child: Center(
-              child: Text(state.errorMessage),
+              child: Text(
+                state.errorMessage,
+                textAlign: TextAlign.center,
+              ),
             ),
           );
         }
