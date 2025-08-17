@@ -13,7 +13,7 @@ class FetchAndDisplaySneakers {
 
   FetchAndDisplaySneakers(this.repository);
 
-  //Facade Pattern applies here
+  //Facade design pattern
   Future<SneakersResponse> call(
     int page,
   ) async {
