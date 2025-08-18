@@ -51,6 +51,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   shimmer: ^3.0.0
   collection: ^1.19.1
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -68,6 +69,13 @@ dev_dependencies:
   hive_generator: any
   analyzer: any
 
+flutter_icons:
+  android: true       # Set to false if you don’t want Android icon
+  ios: true           # Set to false if you don’t want iOS icon
+  image_path: "assets/images/app_icon.jpg"
+  adaptive_icon_background: "#ffffff"   # (For Android adaptive icons)
+  adaptive_icon_foreground: "assets/images/app_icon.jpg"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -80,6 +88,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
+
+
   assets:
     - assets/images/
   #   - images/a_dot_ham.jpeg
