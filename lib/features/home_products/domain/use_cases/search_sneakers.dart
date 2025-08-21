@@ -1,10 +1,10 @@
 
 import 'package:collection/collection.dart';
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+import 'package:sneakers_app/entities/response/sneakers_response.dart';
 
 import '../../../../local_db/hive_dao.dart';
 import '../../../../utils/log_util.dart';
-import '../../data/vos/sneaker_vo.dart';
+import '../../../../entities/vos/sneaker_vo.dart';
 
 class SearchHomePageSneakers {
   //Strategy + Composite design patterns

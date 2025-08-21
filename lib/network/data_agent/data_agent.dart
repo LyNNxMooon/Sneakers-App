@@ -1,4 +1,6 @@
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+
+
+import '../../entities/response/sneakers_response.dart';
 
 abstract class DataAgent {
 

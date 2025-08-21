@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+
 import 'package:sneakers_app/network/api/api_constants.dart';
+
+import '../../entities/response/sneakers_response.dart';
 part 'api_service.g.dart';
 
 @RestApi(baseUrl: kBaseUrl)

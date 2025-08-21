@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+
 import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_bloc.dart';
 
 import '../../../../constants/txt_styles.dart';
+import '../../../../entities/response/sneakers_response.dart';
 import '../../../../local_db/hive_dao.dart';
 import '../../../../utils/dependency_injection_utils.dart';
 import '../BLoC/home_sneakers_event.dart';

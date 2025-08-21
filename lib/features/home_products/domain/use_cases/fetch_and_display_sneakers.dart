@@ -1,5 +1,5 @@
 
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+import 'package:sneakers_app/entities/response/sneakers_response.dart';
 
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 

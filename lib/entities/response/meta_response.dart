@@ -1,8 +1,8 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../../local_db/hive_constants.dart';
-part 'meta_response.g.dart';
+import '../../local_db/hive_constants.dart';
+part '../../entities/response/meta_response.g.dart';
 
 @HiveType(typeId: kHiveTypeIdForMetaData)
 @JsonSerializable()

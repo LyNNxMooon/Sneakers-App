@@ -1,10 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sneakers_app/local_db/hive_constants.dart';
 
-import '../features/home_products/data/response/meta_response.dart';
-import '../features/home_products/data/response/query_response.dart';
-import '../features/home_products/data/response/sneakers_response.dart';
-import '../features/home_products/data/vos/sneaker_vo.dart';
+import '../entities/response/meta_response.dart';
+import '../entities/response/query_response.dart';
+import '../entities/response/sneakers_response.dart';
+import '../entities/vos/sneaker_vo.dart';
 import '../utils/log_util.dart';
 
 class LocalDbDAO {

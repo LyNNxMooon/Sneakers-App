@@ -1,7 +1,8 @@
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 
-import '../../../../network/data_agent/data_agent_impl.dart';
+import '../../../entities/response/sneakers_response.dart';
+import '../../../network/data_agent/data_agent_impl.dart';
 
 class FetchingSneakersModel implements HomeProductsRepo {
   //Data manipulation can be done here (E.g. substituting data for null values returned from API)

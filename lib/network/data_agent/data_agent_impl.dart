@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:sneakers_app/features/home_products/data/response/sneakers_response.dart';
+
 import 'package:sneakers_app/network/api/api_service.dart';
 import 'package:sneakers_app/network/data_agent/data_agent.dart';
 
-import '../../features/home_products/data/response/error_response_for_fetching_sneakers.dart';
+import '../../entities/response/error_response_for_fetching_sneakers.dart';
+import '../../entities/response/sneakers_response.dart';
 import '../../utils/log_util.dart';
 
 class DataAgentImpl implements DataAgent {

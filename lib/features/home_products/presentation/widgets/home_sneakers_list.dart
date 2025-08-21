@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'package:sneakers_app/features/home_products/data/vos/sneaker_vo.dart';
+import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../../../../constants/colors.dart';

@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:sneakers_app/features/home_products/data/response/meta_response.dart';
-import 'package:sneakers_app/features/home_products/data/response/query_response.dart';
-import 'package:sneakers_app/features/home_products/data/vos/sneaker_vo.dart';
+import 'package:sneakers_app/entities/response/meta_response.dart';
+import 'package:sneakers_app/entities/response/query_response.dart';
+import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import '../../../../local_db/hive_constants.dart';
+import '../../local_db/hive_constants.dart';
 part 'sneakers_response.g.dart';
 
 

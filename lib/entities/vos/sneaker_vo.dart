@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../../../../local_db/hive_constants.dart';
+import '../../local_db/hive_constants.dart';
 part 'sneaker_vo.g.dart';
 
 @HiveType(typeId: kHiveTypeIdForSneaker)

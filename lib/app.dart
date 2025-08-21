@@ -103,7 +103,7 @@ class _IndexPageState extends State<IndexPage> {
                     tabs: const [
                       GButton(icon: LineIcons.home, text: 'Home'),
                       GButton(icon: LineIcons.shoppingBag, text: 'Cart'),
-                      GButton(icon: LineIcons.history, text: 'Orders'),
+                      GButton(icon: LineIcons.search, text: 'Search'),
                       GButton(icon: LineIcons.user, text: 'Profile'),
                     ],
                     selectedIndex: _selectedIndex,
