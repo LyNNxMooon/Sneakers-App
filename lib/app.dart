@@ -10,9 +10,12 @@ import 'package:sneakers_app/constants/colors.dart';
 import 'package:sneakers_app/features/cart/presentation/screens/cart_screen.dart';
 import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_bloc.dart';
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
+import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_bloc.dart';
 import 'package:sneakers_app/utils/dependency_injection_utils.dart';
 
 import 'features/home_products/presentation/BLoC/home_sneakers_event.dart';
+import 'features/search/presentation/BLoC/search_sneakers_event.dart';
+import 'features/search/presentation/screens/search_screen.dart';
 import 'local_db/hive_dao.dart';
 
 class MyApp extends StatelessWidget {
@@ -29,6 +32,13 @@ class MyApp extends StatelessWidget {
                     ? 1
                     : LocalDbDAO.instance.getLastLoadedSneakerPage()!)),
         ),
+        BlocProvider<SearchSneakersBloc>(
+          create: (_) => sl<SearchSneakersBloc>()
+            ..add(FetchSneakersEvent(
+                page: LocalDbDAO.instance.getLastSearchedSneakerPage() == null
+                    ? 1
+                    : LocalDbDAO.instance.getLastSearchedSneakerPage()!)),
+        )
       ],
       child: MaterialApp(
         title: "Sneakers App",
@@ -53,7 +63,7 @@ class _IndexPageState extends State<IndexPage> {
   List<Widget> _screens = <Widget>[
     HomeScreen(),
     CartScreen(),
-    HomeScreen(),
+    SearchScreen(),
     HomeScreen(),
   ];
 

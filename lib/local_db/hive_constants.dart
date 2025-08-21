@@ -2,6 +2,9 @@
 const kHiveKeyForSneakers = "kHiveKeyForSneakers";
 const kHiveKeyForTimeLastFetch = "kHiveKeyForTimeLastFetch";
 const kHiveKeyForSneakerPage = "kHiveKeyForSneakerPage";
+const kHiveKeyForSearchSneakers = "kHiveKeyForSearchSneakers";
+const kHiveKeyForTimeLastSearch = "kHiveKeyForTimeLastSearch";
+const kHiveKeyForSearchedSneakersPage = "kHiveKeyForSearchedSneakersPage";
 
 //TypeId
 const kHiveTypeIdForSneaker = 1;
@@ -14,3 +17,6 @@ const kHiveTypeIdForSneakersResponse = 4;
 const kHiveBoxForSneakers = "kHiveBoxForSneakers";
 const kHiveBoxForTimeLastFetch = "kHiveBoxForTimeLastFetch";
 const kHiveBoxForSneakerPage = "kHiveBoxForSneakerPage";
+const kHiveBoxForSearchSneakers = "kHiveBoxForSearchSneakers";
+const kHiveBoxForTimeLastSearch = "kHiveBoxForTimeLastSearch";
+const kHiveBoxForSearchedSneakersPage = "kHiveBoxForSearchedSneakersPage";

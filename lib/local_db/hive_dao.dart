@@ -27,6 +27,10 @@ class LocalDbDAO {
       await Hive.openBox<DateTime>(kHiveBoxForTimeLastFetch);
       await Hive.openBox<int>(kHiveBoxForSneakerPage);
 
+      await Hive.openBox<SneakersResponse>(kHiveBoxForSearchSneakers);
+      await Hive.openBox<DateTime>(kHiveBoxForTimeLastSearch);
+      await Hive.openBox<int>(kHiveBoxForSearchedSneakersPage);
+
       logger.d('Successfully initialized local database for sneakers!');
     } catch (error) {
       logger.e('Error initializing for local database: $error');
@@ -34,13 +38,23 @@ class LocalDbDAO {
   }
 
   //Boxes
+  //--Home Page
   Box<SneakersResponse> _sneakersBox() =>
       Hive.box<SneakersResponse>(kHiveBoxForSneakers);
   Box<DateTime> _timeLastFetchBox() =>
       Hive.box<DateTime>(kHiveBoxForTimeLastFetch);
   Box<int> _sneakerPageBox() => Hive.box<int>(kHiveBoxForSneakerPage);
 
+  //--Search Page
+  Box<SneakersResponse> _searchedSneakersBox() =>
+      Hive.box<SneakersResponse>(kHiveBoxForSearchSneakers);
+  Box<DateTime> _timeLastSearchBox() =>
+      Hive.box<DateTime>(kHiveBoxForTimeLastSearch);
+  Box<int> _searchedSneakerPageBox() =>
+      Hive.box<int>(kHiveBoxForSearchedSneakersPage);
+
   //Get Data
+//--HomePage
   SneakersResponse? getSneakers() {
     try {
       return _sneakersBox().get(kHiveKeyForSneakers);
@@ -59,7 +73,7 @@ class LocalDbDAO {
     }
   }
 
-  int? getLastLoadedSneakerPage () {
+  int? getLastLoadedSneakerPage() {
     try {
       return _sneakerPageBox().get(kHiveKeyForSneakerPage);
     } catch (error) {
@@ -68,7 +82,36 @@ class LocalDbDAO {
     }
   }
 
+  //--Search page
+  SneakersResponse? getSearchedSneakers() {
+    try {
+      return _searchedSneakersBox().get(kHiveKeyForSearchSneakers);
+    } catch (error) {
+      logger.e('Error getting searched sneakers from local db: $error');
+      return null;
+    }
+  }
+
+  DateTime? getLastSearchTime() {
+    try {
+      return _timeLastSearchBox().get(kHiveKeyForTimeLastSearch);
+    } catch (error) {
+      logger.e('Error getting last search time from local db: $error');
+      return null;
+    }
+  }
+
+  int? getLastSearchedSneakerPage() {
+    try {
+      return _searchedSneakerPageBox().get(kHiveKeyForSearchedSneakersPage);
+    } catch (error) {
+      logger.e('Error getting last searched page from local db: $error');
+      return null;
+    }
+  }
+
   //Insert Data
+  //--home Page
   void saveSneakers({required SneakersResponse sneakers}) {
     try {
       _sneakersBox().put(kHiveKeyForSneakers, sneakers);
@@ -85,7 +128,7 @@ class LocalDbDAO {
     }
   }
 
-  void saveLastLoadedSneakerPage ({required int page}) {
+  void saveLastLoadedSneakerPage({required int page}) {
     try {
       _sneakerPageBox().put(kHiveKeyForSneakerPage, page);
     } catch (error) {
@@ -93,7 +136,33 @@ class LocalDbDAO {
     }
   }
 
+  //--Search page
+  void saveSearchedSneakers({required SneakersResponse sneakers}) {
+    try {
+      _searchedSneakersBox().put(kHiveKeyForSearchSneakers, sneakers);
+    } catch (error) {
+      logger.e('Error saving searched sneakers to local db: $error');
+    }
+  }
+
+  void saveLastSearchTime({required DateTime lastSearchTime}) {
+    try {
+      _timeLastSearchBox().put(kHiveKeyForTimeLastSearch, lastSearchTime);
+    } catch (error) {
+      logger.e('Error saving last search time to local db: $error');
+    }
+  }
+
+  void saveLastSearchedSneakerPage({required int page}) {
+    try {
+      _searchedSneakerPageBox().put(kHiveKeyForSearchedSneakersPage, page);
+    } catch (error) {
+      logger.e('Error saving last searched page to local db: $error');
+    }
+  }
+
   //Check If data is available
+  //--Home page
   bool isCachedSneakersAvailable() {
     try {
       return _sneakersBox().isNotEmpty;
@@ -120,6 +189,37 @@ class LocalDbDAO {
     } catch (error) {
       logger.e(
           'Error checking if last loaded page is available from local db: $error');
+      return false;
+    }
+  }
+
+  //--Search Page
+  bool isCachedSearchedSneakersAvailable() {
+    try {
+      return _searchedSneakersBox().isNotEmpty;
+    } catch (error) {
+      logger
+          .e('Error checking if searched sneakers are available from local db: $error');
+      return false;
+    }
+  }
+
+  bool isCachedLastSearchTimeAvailable() {
+    try {
+      return _timeLastSearchBox().isNotEmpty;
+    } catch (error) {
+      logger.e(
+          'Error checking if last search time is available from local db: $error');
+      return false;
+    }
+  }
+
+  bool isCachedLastSearchedPageAvailable() {
+    try {
+      return _searchedSneakerPageBox().isNotEmpty;
+    } catch (error) {
+      logger.e(
+          'Error checking if last searched page is available from local db: $error');
       return false;
     }
   }

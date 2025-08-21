@@ -25,6 +25,9 @@ class SneakerVO {
   @HiveField(9)
   final String category;
   @HiveField(10)
+  @JsonKey(name: 'secondary_category')
+  final String secondaryCategory;
+  @HiveField(11)
   @JsonKey(name: 'product_type')
   final String productType;
 
@@ -38,6 +41,7 @@ class SneakerVO {
     required this.image,
     required this.sku,
     required this.category,
+    required this.secondaryCategory,
     required this.productType,
   });
 

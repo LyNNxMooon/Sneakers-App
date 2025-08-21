@@ -1,21 +1,21 @@
-
 import 'package:collection/collection.dart';
-import 'package:sneakers_app/entities/response/sneakers_response.dart';
 
+import '../../../../entities/response/sneakers_response.dart';
+import '../../../../entities/vos/sneaker_vo.dart';
 import '../../../../local_db/hive_dao.dart';
 import '../../../../utils/log_util.dart';
-import '../../../../entities/vos/sneaker_vo.dart';
 
-class SearchHomePageSneakers {
+class SearchSneakers {
   //Strategy + Composite design patterns
-  Future<SneakersResponse> call(String title, String model, String sku) async {
+  Future<SneakersResponse> call(
+      String title, String model, String sku, String secCategory) async {
     try {
       final SneakersResponse sneakerObjFromLocalDb =
-          LocalDbDAO.instance.getSneakers()!;
+          LocalDbDAO.instance.getSearchedSneakers()!;
 
       List<SneakerVO> currentSearchedList = sneakerObjFromLocalDb.data;
 
-      List<ISearchHomeSneakersStrategy> activeStrategies = [];
+      List<ISearchSneakersStrategy> activeStrategies = [];
       if (title.isNotEmpty) {
         activeStrategies.add(TitleSearch(searchTerm: title));
       }
@@ -24,9 +24,12 @@ class SearchHomePageSneakers {
       }
       if (sku.isNotEmpty) {
         activeStrategies.add(SkuSearch(searchTerm: sku));
-      }//Continue adding more search criteria here.....
+      }
+      if (secCategory.isNotEmpty) {
+        activeStrategies.add(SecCategorySearch(searchTerm: secCategory));
+      } //Continue adding more search criteria here.....
 
-      for (ISearchHomeSneakersStrategy strategy in activeStrategies) {
+      for (ISearchSneakersStrategy strategy in activeStrategies) {
         currentSearchedList =
             await strategy.searchSneakers(currentSearchedList);
       }
@@ -37,21 +40,20 @@ class SearchHomePageSneakers {
           query: sneakerObjFromLocalDb.query,
           meta: sneakerObjFromLocalDb.meta);
     } catch (error) {
-      logger.e(
-          "Error occurred on searching home page sneakers! Read message on screen");
+      logger.e("Error occurred on searching sneakers! Read message on screen");
       return Future.error(
-          "Error occurred while searching home page sneakers! Please wipe out the Text field filter and try again! Error sms: $error");
+          "Error occurred while searching sneakers! Please wipe out the Text field filter and try again! Error sms: $error");
     }
   }
 }
 
 //Strategy Pattern interface
-abstract class ISearchHomeSneakersStrategy {
+abstract class ISearchSneakersStrategy {
   Future<List<SneakerVO>> searchSneakers(List<SneakerVO> allSneakers);
 }
 
 //Concrete Class: titleSearch
-class TitleSearch implements ISearchHomeSneakersStrategy {
+class TitleSearch implements ISearchSneakersStrategy {
   final String searchTerm;
 
   TitleSearch({required this.searchTerm});
@@ -68,15 +70,15 @@ class TitleSearch implements ISearchHomeSneakersStrategy {
           sneakersByTitle, (s) => s.title, _norm(searchTerm));
     } catch (error) {
       logger.e(
-          "Error occurred on searching home page sneakers by TITLE! Read message on screen");
+          "Error occurred on searching sneakers by TITLE! Read message on screen");
       return Future.error(
-          "Error occurred while searching home page sneakers by TITLE! Please wipe out the Text field filter and try again! Error sms: $error");
+          "Error occurred while searching sneakers by TITLE! Please wipe out the Text field filter and try again! Error sms: $error");
     }
   }
 }
 
 //Concrete Class: modelSearch
-class ModelSearch implements ISearchHomeSneakersStrategy {
+class ModelSearch implements ISearchSneakersStrategy {
   final String searchTerm;
 
   ModelSearch({required this.searchTerm});
@@ -93,15 +95,15 @@ class ModelSearch implements ISearchHomeSneakersStrategy {
           sneakersByModel, (s) => s.model, _norm(searchTerm));
     } catch (error) {
       logger.e(
-          "Error occurred on searching home page sneakers by MODEL! Read message on screen");
+          "Error occurred on searching sneakers by MODEL! Read message on screen");
       return Future.error(
-          "Error occurred while searching home page sneakers by MODEL! Please wipe out the Text field filter and try again! Error sms: $error");
+          "Error occurred while searching sneakers by MODEL! Please wipe out the Text field filter and try again! Error sms: $error");
     }
   }
 }
 
 //Concrete Class: skuSearch
-class SkuSearch implements ISearchHomeSneakersStrategy {
+class SkuSearch implements ISearchSneakersStrategy {
   final String searchTerm;
 
   SkuSearch({required this.searchTerm});
@@ -118,12 +120,38 @@ class SkuSearch implements ISearchHomeSneakersStrategy {
           sneakersBySku, (s) => s.sku, _norm(searchTerm));
     } catch (error) {
       logger.e(
-          "Error occurred on searching home page sneakers by SKU! Read message on screen");
+          "Error occurred on searching sneakers by SKU! Read message on screen");
       return Future.error(
-          "Error occurred while searching home page sneakers by SKU! Please wipe out the Text field filter and try again! Error sms: $error");
+          "Error occurred while searching sneakers by SKU! Please wipe out the Text field filter and try again! Error sms: $error");
     }
   }
-}//Continue adding more search algorithms here...
+}
+
+//Concrete Class: 2nd Category Search
+class SecCategorySearch implements ISearchSneakersStrategy {
+  final String searchTerm;
+
+  SecCategorySearch({required this.searchTerm});
+
+  @override
+  Future<List<SneakerVO>> searchSneakers(List<SneakerVO> allSneakers) async {
+    try {
+      List<SneakerVO> sneakersBySecCategory = List.of(allSneakers)
+        ..sort((a, b) =>
+            _norm(a.secondaryCategory).compareTo(_norm(b.secondaryCategory)));
+
+      if (searchTerm.isEmpty) return allSneakers;
+
+      return _performPrefixSearch(
+          sneakersBySecCategory, (s) => s.secondaryCategory, _norm(searchTerm));
+    } catch (error) {
+      logger.e(
+          "Error occurred on searching sneakers by 2nd Category! Read message on screen");
+      return Future.error(
+          "Error occurred while searching sneakers by 2nd Category! Please wipe out the Text field filter and try again! Error sms: $error");
+    }
+  }
+} //Continue adding more search algorithms here...
 
 //Normalize to lower-case
 String _norm(String s) => s.toLowerCase().trim();
@@ -147,7 +175,7 @@ List<SneakerVO> _performPrefixSearch(
       description: '',
       image: '',
       category: '',
-      secondaryCategory: '',
+      secondaryCategory: q,
       productType: '');
   final dummyEnd = SneakerVO(
       id: '',
@@ -159,7 +187,7 @@ List<SneakerVO> _performPrefixSearch(
       description: '',
       image: '',
       category: '',
-      secondaryCategory: '',
+      secondaryCategory: qMax,
       productType: '');
 
   final start = lowerBound<SneakerVO>(

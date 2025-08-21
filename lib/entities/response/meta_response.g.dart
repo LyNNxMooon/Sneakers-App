@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of '../../../../entities/response/meta_response.dart';
+part of 'meta_response.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

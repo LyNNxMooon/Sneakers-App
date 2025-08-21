@@ -26,14 +26,15 @@ class SneakerVOAdapter extends TypeAdapter<SneakerVO> {
       image: fields[7] as String,
       sku: fields[8] as String,
       category: fields[9] as String,
-      productType: fields[10] as String,
+      secondaryCategory: fields[10] as String,
+      productType: fields[11] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, SneakerVO obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(2)
@@ -53,6 +54,8 @@ class SneakerVOAdapter extends TypeAdapter<SneakerVO> {
       ..writeByte(9)
       ..write(obj.category)
       ..writeByte(10)
+      ..write(obj.secondaryCategory)
+      ..writeByte(11)
       ..write(obj.productType);
   }
 
@@ -81,6 +84,7 @@ SneakerVO _$SneakerVOFromJson(Map<String, dynamic> json) => SneakerVO(
       image: json['image'] as String,
       sku: json['sku'] as String,
       category: json['category'] as String,
+      secondaryCategory: json['secondary_category'] as String,
       productType: json['product_type'] as String,
     );
 
@@ -94,5 +98,6 @@ Map<String, dynamic> _$SneakerVOToJson(SneakerVO instance) => <String, dynamic>{
       'image': instance.image,
       'sku': instance.sku,
       'category': instance.category,
+      'secondary_category': instance.secondaryCategory,
       'product_type': instance.productType,
     };
