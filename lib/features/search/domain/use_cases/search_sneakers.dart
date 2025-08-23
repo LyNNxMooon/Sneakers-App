@@ -36,8 +36,6 @@ class SearchSneakers {
 
       return SneakersResponse(
           data: currentSearchedList,
-          status: sneakerObjFromLocalDb.status,
-          query: sneakerObjFromLocalDb.query,
           meta: sneakerObjFromLocalDb.meta);
     } catch (error) {
       logger.e("Error occurred on searching sneakers! Read message on screen");
@@ -138,12 +136,12 @@ class SecCategorySearch implements ISearchSneakersStrategy {
     try {
       List<SneakerVO> sneakersBySecCategory = List.of(allSneakers)
         ..sort((a, b) =>
-            _norm(a.secondaryCategory).compareTo(_norm(b.secondaryCategory)));
+            _norm(a.secondaryCategory!).compareTo(_norm(b.secondaryCategory!)));
 
       if (searchTerm.isEmpty) return allSneakers;
 
       return _performPrefixSearch(
-          sneakersBySecCategory, (s) => s.secondaryCategory, _norm(searchTerm));
+          sneakersBySecCategory, (s) => s.secondaryCategory!, _norm(searchTerm));
     } catch (error) {
       logger.e(
           "Error occurred on searching sneakers by 2nd Category! Read message on screen");

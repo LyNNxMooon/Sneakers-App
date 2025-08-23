@@ -26,7 +26,7 @@ class SneakerVO {
   final String category;
   @HiveField(10)
   @JsonKey(name: 'secondary_category')
-  final String secondaryCategory;
+  String? secondaryCategory;
   @HiveField(11)
   @JsonKey(name: 'product_type')
   final String productType;

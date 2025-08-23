@@ -38,7 +38,7 @@ class _TitleAndPageSettingState extends State<TitleAndPageSetting> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "${widget.sneakerResponse.query.category} Sneakers",
+            "${widget.sneakerResponse.data[0].category} Sneakers",
             style: ktitleStyle,
           ),
           Container(

@@ -2,7 +2,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sneakers_app/local_db/hive_constants.dart';
 
 import '../entities/response/meta_response.dart';
-import '../entities/response/query_response.dart';
 import '../entities/response/sneakers_response.dart';
 import '../entities/vos/sneaker_vo.dart';
 import '../utils/log_util.dart';
@@ -19,7 +18,6 @@ class LocalDbDAO {
       await Hive.initFlutter();
 
       Hive.registerAdapter(SneakerVOAdapter());
-      Hive.registerAdapter(QueryResponseAdapter());
       Hive.registerAdapter(MetaResponseAdapter());
       Hive.registerAdapter(SneakersResponseAdapter());
 

@@ -33,8 +33,6 @@ class SearchHomePageSneakers {
 
       return SneakersResponse(
           data: currentSearchedList,
-          status: sneakerObjFromLocalDb.status,
-          query: sneakerObjFromLocalDb.query,
           meta: sneakerObjFromLocalDb.meta);
     } catch (error) {
       logger.e(

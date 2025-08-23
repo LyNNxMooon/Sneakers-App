@@ -26,7 +26,7 @@ class SneakerVOAdapter extends TypeAdapter<SneakerVO> {
       image: fields[7] as String,
       sku: fields[8] as String,
       category: fields[9] as String,
-      secondaryCategory: fields[10] as String,
+      secondaryCategory: fields[10] as String?,
       productType: fields[11] as String,
     );
   }
@@ -84,7 +84,7 @@ SneakerVO _$SneakerVOFromJson(Map<String, dynamic> json) => SneakerVO(
       image: json['image'] as String,
       sku: json['sku'] as String,
       category: json['category'] as String,
-      secondaryCategory: json['secondary_category'] as String,
+      secondaryCategory: json['secondary_category'] as String?,
       productType: json['product_type'] as String,
     );
 

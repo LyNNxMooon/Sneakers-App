@@ -17,24 +17,18 @@ class SneakersResponseAdapter extends TypeAdapter<SneakersResponse> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return SneakersResponse(
-      status: fields[0] as String,
-      query: fields[1] as QueryResponse,
-      data: (fields[2] as List).cast<SneakerVO>(),
-      meta: fields[3] as MetaResponse,
+      data: (fields[0] as List).cast<SneakerVO>(),
+      meta: fields[1] as MetaResponse,
     );
   }
 
   @override
   void write(BinaryWriter writer, SneakersResponse obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.status)
-      ..writeByte(1)
-      ..write(obj.query)
       ..writeByte(2)
+      ..writeByte(0)
       ..write(obj.data)
-      ..writeByte(3)
+      ..writeByte(1)
       ..write(obj.meta);
   }
 
@@ -55,8 +49,6 @@ class SneakersResponseAdapter extends TypeAdapter<SneakersResponse> {
 
 SneakersResponse _$SneakersResponseFromJson(Map<String, dynamic> json) =>
     SneakersResponse(
-      status: json['status'] as String,
-      query: QueryResponse.fromJson(json['query'] as Map<String, dynamic>),
       data: (json['data'] as List<dynamic>)
           .map((e) => SneakerVO.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -65,8 +57,6 @@ SneakersResponse _$SneakersResponseFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$SneakersResponseToJson(SneakersResponse instance) =>
     <String, dynamic>{
-      'status': instance.status,
-      'query': instance.query,
       'data': instance.data,
       'meta': instance.meta,
     };
