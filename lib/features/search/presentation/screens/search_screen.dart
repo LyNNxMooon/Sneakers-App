@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_debouncer/flutter_debouncer.dart';
 import 'package:gap/gap.dart';
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_bloc.dart';
 
@@ -57,8 +58,8 @@ class _SearchScreenState extends State<SearchScreen> {
           return (state.sneakers == null)
               ? SearchPageLoadingWidget()
               : SearchSneakersList(
-            sneakersList: state.sneakers!.data,
-          );
+                  sneakersList: state.sneakers!.data,
+                );
         }
 
         //Error
@@ -87,6 +88,9 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  final Debouncer debouncer = Debouncer();
+  static const duration = Duration(milliseconds: 250);
+
   Widget searchFieldWidgetsRow() {
     return Padding(
       padding: EdgeInsets.only(left: 12, right: 5),
@@ -105,6 +109,16 @@ class _SearchScreenState extends State<SearchScreen> {
                       height: 45,
                       width: (MediaQuery.of(context).size.width - 30) * 0.3,
                       child: SearchBoxWidget(
+                        keyboardType: TextInputType.number,
+                        function: (value) {
+                          debouncer.debounce(
+                              duration: duration,
+                              onDebounce: () {
+                                context.read<SearchSneakersBloc>().add(
+                                    FetchSneakersEvent(
+                                        page: int.parse(_pageController.text)));
+                              });
+                        },
                         controller: _pageController,
                         hintText: "Page..",
                         label:
@@ -116,7 +130,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     height: 45,
                     width: (MediaQuery.of(context).size.width - 30) * 0.3,
                     child: SearchBoxWidget(
-                      controller: _sneakerTitleController,
+
+                      controller: _pageController,
                       hintText: "Page..",
                       label: "Page",
                     ),

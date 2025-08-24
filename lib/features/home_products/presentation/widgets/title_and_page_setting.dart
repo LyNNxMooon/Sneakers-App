@@ -7,7 +7,6 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 import '../../../../constants/txt_styles.dart';
 import '../../../../entities/response/sneakers_response.dart';
 import '../../../../local_db/hive_dao.dart';
-import '../../../../utils/dependency_injection_utils.dart';
 import '../BLoC/home_sneakers_event.dart';
 
 class TitleAndPageSetting extends StatefulWidget {
