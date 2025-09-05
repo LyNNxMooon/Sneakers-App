@@ -12,6 +12,7 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_bloc.dart';
 import 'package:sneakers_app/utils/dependency_injection_utils.dart';
+import 'package:sneakers_app/utils/log_util.dart';
 
 import 'features/home_products/presentation/BLoC/home_sneakers_event.dart';
 import 'features/search/presentation/BLoC/search_sneakers_event.dart';
@@ -65,6 +66,12 @@ class _IndexPageState extends State<IndexPage> {
     CartScreen(),
     SearchScreen(),
     HomeScreen(),
+  ];
+
+  List<ILoadDataStrategy> _loadingDataStrategies = <ILoadDataStrategy>[
+    LoadDataOnHomePage(),
+    LoadDataOnCartPage(),
+    LoadDataOnSearchPage()
   ];
 
   @override
@@ -121,6 +128,8 @@ class _IndexPageState extends State<IndexPage> {
                       setState(() {
                         _selectedIndex = index;
                       });
+
+                      _loadingDataStrategies[index].loadData(context);
                     },
                   ),
                 ),
@@ -130,5 +139,40 @@ class _IndexPageState extends State<IndexPage> {
         ],
       ),
     );
+  }
+}
+
+//Strategy Pattern Interface
+abstract class ILoadDataStrategy {
+  Future<void> loadData(BuildContext context);
+}
+
+//Concrete Class: Load data for home page
+class LoadDataOnHomePage implements ILoadDataStrategy {
+  @override
+  Future<void> loadData(BuildContext context) async {
+    context.read<HomeSneakersBloc>().add(FetchHomeSneakers(
+        page: LocalDbDAO.instance.getLastLoadedSneakerPage() == null
+            ? 1
+            : LocalDbDAO.instance.getLastLoadedSneakerPage()!));
+  }
+}
+
+//Concrete Class: Load data for cart page
+class LoadDataOnCartPage implements ILoadDataStrategy {
+  @override
+  Future<void> loadData(BuildContext context) async {
+    logger.d("Loading data for cart page...");
+  }
+}
+
+//Concrete Class: Load data for search page
+class LoadDataOnSearchPage implements ILoadDataStrategy {
+  @override
+  Future<void> loadData(BuildContext context) async {
+    context.read<SearchSneakersBloc>().add(FetchSneakersEvent(
+        page: LocalDbDAO.instance.getLastLoadedSneakerPage() == null
+            ? 1
+            : LocalDbDAO.instance.getLastLoadedSneakerPage()!));
   }
 }
