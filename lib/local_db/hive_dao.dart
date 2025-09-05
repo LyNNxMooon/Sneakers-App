@@ -3,6 +3,7 @@ import 'package:sneakers_app/local_db/hive_constants.dart';
 
 import '../entities/response/meta_response.dart';
 import '../entities/response/sneakers_response.dart';
+import '../entities/vos/cart_item_vo.dart';
 import '../entities/vos/sneaker_vo.dart';
 import '../utils/log_util.dart';
 
@@ -20,11 +21,12 @@ class LocalDbDAO {
       Hive.registerAdapter(SneakerVOAdapter());
       Hive.registerAdapter(MetaResponseAdapter());
       Hive.registerAdapter(SneakersResponseAdapter());
+      Hive.registerAdapter(CartItemVOAdapter());
 
       await Hive.openBox<SneakersResponse>(kHiveBoxForSneakers);
       await Hive.openBox<DateTime>(kHiveBoxForTimeLastFetch);
       await Hive.openBox<int>(kHiveBoxForSneakerPage);
-
+      await Hive.openBox<List>(kHiveBoxForSneakersCart);
       await Hive.openBox<SneakersResponse>(kHiveBoxForSearchSneakers);
       await Hive.openBox<DateTime>(kHiveBoxForTimeLastSearch);
       await Hive.openBox<int>(kHiveBoxForSearchedSneakersPage);
@@ -50,6 +52,9 @@ class LocalDbDAO {
       Hive.box<DateTime>(kHiveBoxForTimeLastSearch);
   Box<int> _searchedSneakerPageBox() =>
       Hive.box<int>(kHiveBoxForSearchedSneakersPage);
+
+  //--Cart Page
+  Box<List> _sneakersCartBox() => Hive.box<List>(kHiveBoxForSneakersCart);
 
   //Get Data
 //--HomePage
@@ -108,6 +113,16 @@ class LocalDbDAO {
     }
   }
 
+  //--Cart page
+  List? getSneakersCart() {
+    try {
+      return _sneakersCartBox().get(kHiveKeyForSneakersCart);
+    } catch (error) {
+      logger.e('Error getting sneakers cart from local db: $error');
+      return null;
+    }
+  }
+
   //Insert Data
   //--home Page
   void saveSneakers({required SneakersResponse sneakers}) {
@@ -159,6 +174,15 @@ class LocalDbDAO {
     }
   }
 
+  //--Cart page
+  void saveSneakersCart({required List cart}) {
+    try {
+      _sneakersCartBox().put(kHiveKeyForSneakersCart, cart);
+    } catch (error) {
+      logger.e('Error saving sneakers cart  to local db: $error');
+    }
+  }
+
   //Check If data is available
   //--Home page
   bool isCachedSneakersAvailable() {
@@ -196,8 +220,8 @@ class LocalDbDAO {
     try {
       return _searchedSneakersBox().isNotEmpty;
     } catch (error) {
-      logger
-          .e('Error checking if searched sneakers are available from local db: $error');
+      logger.e(
+          'Error checking if searched sneakers are available from local db: $error');
       return false;
     }
   }
@@ -218,6 +242,17 @@ class LocalDbDAO {
     } catch (error) {
       logger.e(
           'Error checking if last searched page is available from local db: $error');
+      return false;
+    }
+  }
+
+  //--Cart page
+  bool isSneakersCartAvailable() {
+    try {
+      return _sneakersCartBox().isNotEmpty;
+    } catch (error) {
+      logger.e(
+          'Error checking if sneakers cart is available from local db: $error');
       return false;
     }
   }

@@ -7,7 +7,7 @@ class FetchingAndSearchingSneakersModel implements SearchRepo {
   //Data manipulation can be done here (E.g. substituting data for null values returned from API)
 
   @override
-  Future<SneakersResponse> fetchAndSearchSneakers(String token,
+  Future<SneakersResponse> fetchToSearchSneakers(String token,
       String productType, String category, int page, int limit) async {
     try {
       return await DataAgentImpl.instance

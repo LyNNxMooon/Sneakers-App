@@ -29,7 +29,7 @@ class FetchSneakers {
               ? 1
               : page;
 
-          final sneakersResponse = await repository.fetchAndSearchSneakers(
+          final sneakersResponse = await repository.fetchToSearchSneakers(
               kAuthToken, "sneakers", "Nike", callingPage, 100);
 
           //checks if sneaker list is empty
