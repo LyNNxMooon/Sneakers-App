@@ -42,4 +42,7 @@ class CartItemVO {
       required this.qty,
       required this.package,
       required this.shipping});
+
+  factory CartItemVO.fromJson(Map<String, dynamic> json) =>
+      _$CartItemVOFromJson(json);
 }
