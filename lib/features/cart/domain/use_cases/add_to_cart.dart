@@ -40,6 +40,31 @@ class AddToCart {
           "Error occurred when adding to cart! Please try again with correct parameters. Error sms: $error");
     }
   }
+
+  //Providing cached data to display while loading
+  Future<List?> getCachedSneakersCartWhileLoading() async {
+    try {
+      return LocalDbDAO.instance.getSneakersCart();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  Future<List?> getCachedPackageCartWhileLoading() async {
+    try {
+      return LocalDbDAO.instance.getPackageCart();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  Future<List?> getCachedShippingCartWhileLoading() async {
+    try {
+      return LocalDbDAO.instance.getShippingCart();
+    } catch (error) {
+      return null;
+    }
+  }
 }
 
 //Decorator Pattern

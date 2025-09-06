@@ -7,6 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:sneakers_app/constants/colors.dart';
+import 'package:sneakers_app/features/cart/presentation/BLoC/cart_bloc.dart';
+import 'package:sneakers_app/features/cart/presentation/BLoC/cart_events.dart';
 import 'package:sneakers_app/features/cart/presentation/screens/cart_screen.dart';
 import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_bloc.dart';
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
@@ -39,7 +41,8 @@ class MyApp extends StatelessWidget {
                 page: LocalDbDAO.instance.getLastSearchedSneakerPage() == null
                     ? 1
                     : LocalDbDAO.instance.getLastSearchedSneakerPage()!)),
-        )
+        ),
+        BlocProvider<CartBloc>(create: (_) => sl<CartBloc>()..add(LoadCart()))
       ],
       child: MaterialApp(
         title: "Sneakers App",

@@ -2,7 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 import 'package:sneakers_app/features/search/domain/repositories/search_repo.dart';
+import '../features/cart/domain/use_cases/add_to_cart.dart';
 import '../features/cart/models/cart_model.dart';
+import '../features/cart/presentation/BLoC/cart_bloc.dart';
 import '../features/home_products/models/fetching_sneakers_model.dart';
 import '../features/home_products/domain/use_cases/fetch_and_display_sneakers.dart';
 import '../features/home_products/domain/use_cases/search_sneakers.dart';
@@ -22,6 +24,7 @@ Future<void> init() async {
       fetchAndDisplaySneakers: sl(), searchHomeSneakers: sl()));
   sl.registerFactory(
       () => SearchSneakersBloc(fetchSneakers: sl(), searchSneakers: sl()));
+  sl.registerFactory(() => CartBloc(addToCartUseCase: sl()));
 
   //Repos
   sl.registerLazySingleton<HomeProductsRepo>(() => FetchingSneakersModel());
@@ -34,4 +37,5 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SearchHomePageSneakers());
   sl.registerLazySingleton(() => FetchSneakers(sl()));
   sl.registerLazySingleton(() => SearchSneakers());
+  sl.registerLazySingleton(() => AddToCart(sl()));
 }
