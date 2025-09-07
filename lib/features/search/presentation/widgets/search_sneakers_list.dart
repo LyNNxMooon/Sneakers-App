@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
+import 'package:sneakers_app/features/search/presentation/widgets/package_and_shipping_dialog_for_searchpage.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/images.dart';
@@ -106,7 +107,8 @@ class SearchSneakersList extends StatelessWidget {
                                     Text(
                                       sneaker.gender,
                                       style: TextStyle(
-                                          fontSize: 10, fontWeight: FontWeight.w500),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500),
                                     ),
                                   ],
                                 ),
@@ -114,7 +116,6 @@ class SearchSneakersList extends StatelessWidget {
                               const Gap(15),
                               Container(
                                 padding: EdgeInsets.symmetric(horizontal: 3),
-
                                 child: Text(
                                   sneaker.secondaryCategory!.length > 15
                                       ? "${sneaker.secondaryCategory!.substring(0, 15)} ..."
@@ -122,18 +123,26 @@ class SearchSneakersList extends StatelessWidget {
                                   style: TextStyle(fontSize: 12),
                                 ),
                               ),
-
-
                             ],
                           ),
                         ],
                       )
                     ],
                   ),
-                  Icon(
-                    Icons.add_shopping_cart,
-                    size: 20,
-                  )
+                  GestureDetector(
+                      onTap: (() {
+                        showDialog(
+                            context: context,
+                            builder: (_) {
+                              return PackageAndShippingDialogForSearchPage(
+                                sneaker: sneaker,
+                              );
+                            });
+                      }),
+                      child: Icon(
+                        Icons.add_shopping_cart,
+                        size: 20,
+                      ))
                 ],
               ),
             ),

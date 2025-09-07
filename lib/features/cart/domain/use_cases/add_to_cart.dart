@@ -17,7 +17,7 @@ class AddToCart {
     try {
       AddCartItem addingCartFunction = AddNormalCartItem();
 
-      if (shipping) {
+      if (shipping && package) {
         addingCartFunction =
             AddCartItemWithPackageDecorator(addingCartFunction, packageType);
         addingCartFunction = AddCartItemWithShippingDecorator(
@@ -184,6 +184,7 @@ class AddCartItemWithShippingDecorator extends AddCartItemDecorator {
 
       LocalDbDAO.instance.saveShippingCart(cart: shippingCart);
 
+      logger.d("Item added to cart with shipping: $shippingType!");
       returnMessage += "\n Item is Shipped with $shippingType";
 
       return returnMessage;

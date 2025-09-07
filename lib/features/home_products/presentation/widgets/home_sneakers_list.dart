@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:sneakers_app/features/home_products/presentation/widgets/package_and_shipping_dialog.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/images.dart';
@@ -27,14 +28,15 @@ class HomeSneakersList extends StatelessWidget {
               mainAxisSpacing: 15,
               crossAxisSpacing: 15,
               childAspectRatio: 0.7),
-          itemBuilder: (context, index) => itemCard(sneakersList[index], index),
+          itemBuilder: (context, index) =>
+              itemCard(sneakersList[index], index, context),
           itemCount: sneakersList.length,
         ),
       ),
     );
   }
 
-  Widget itemCard(SneakerVO sneaker, int index) {
+  Widget itemCard(SneakerVO sneaker, int index, BuildContext context) {
     return AnimationConfiguration.staggeredGrid(
       position: index,
       duration: const Duration(milliseconds: 1000),
@@ -147,7 +149,20 @@ class HomeSneakersList extends StatelessWidget {
                       "\$120.89",
                       style: TextStyle(fontWeight: FontWeight.w600),
                     ),
-                    Icon(Icons.add_shopping_cart, size: 20,)
+                    GestureDetector(
+                        onTap: (() {
+                          showDialog(
+                              context: context,
+                              builder: (_) {
+                                return PackagingShippingDialog(
+                                  sneaker: sneaker,
+                                );
+                              });
+                        }),
+                        child: Icon(
+                          Icons.add_shopping_cart,
+                          size: 20,
+                        ))
                   ],
                 ),
               )

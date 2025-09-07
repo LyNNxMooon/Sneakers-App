@@ -53,6 +53,7 @@ dependencies:
   collection: ^1.19.1
   flutter_launcher_icons: ^0.14.4
   flutter_debouncer: ^2.0.0
+  top_snackbar_flutter: ^3.3.0
 
 dev_dependencies:
   flutter_test:

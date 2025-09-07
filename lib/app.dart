@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
                     ? 1
                     : LocalDbDAO.instance.getLastSearchedSneakerPage()!)),
         ),
-        BlocProvider<CartBloc>(create: (_) => sl<CartBloc>()..add(LoadCart()))
+        BlocProvider<CartBloc>(create: (_) => sl<CartBloc>())
       ],
       child: MaterialApp(
         title: "Sneakers App",
