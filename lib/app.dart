@@ -15,7 +15,7 @@ import 'package:sneakers_app/features/home_products/presentation/screens/home_sc
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_bloc.dart';
 import 'package:sneakers_app/utils/dependency_injection_utils.dart';
 import 'package:sneakers_app/utils/log_util.dart';
-
+import 'package:sneakers_app/utils/enums.dart';
 import 'features/home_products/presentation/BLoC/home_sneakers_event.dart';
 import 'features/search/presentation/BLoC/search_sneakers_event.dart';
 import 'features/search/presentation/screens/search_screen.dart';
@@ -42,7 +42,9 @@ class MyApp extends StatelessWidget {
                     ? 1
                     : LocalDbDAO.instance.getLastSearchedSneakerPage()!)),
         ),
-        BlocProvider<CartBloc>(create: (_) => sl<CartBloc>())
+        BlocProvider<CartBloc>(
+            create: (_) =>
+                sl<CartBloc>()..add(LoadCart(cartType: CartType.cart)))
       ],
       child: MaterialApp(
         title: "Sneakers App",

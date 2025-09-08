@@ -1,0 +1,1 @@
+enum CartType {cart, packageCart, shippingCart}

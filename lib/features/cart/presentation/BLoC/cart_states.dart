@@ -17,9 +17,9 @@ class AddedToCart extends CartStates {
 }
 
 class CartsLoaded extends CartStates {
-  final List sneakersCart;
+  final List cart;
 
-  CartsLoaded(this.sneakersCart);
+  CartsLoaded(this.cart);
 }
 
 class CartError extends CartStates {

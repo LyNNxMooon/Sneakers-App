@@ -1,4 +1,5 @@
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
+import 'package:sneakers_app/utils/enums.dart';
 
 abstract class CartEvents {}
 
@@ -23,4 +24,8 @@ class RemoveCart extends CartEvents {}
 
 class UpdateCart extends CartEvents {}
 
-class LoadCart extends CartEvents {}
+class LoadCart extends CartEvents {
+  final CartType cartType;
+
+  LoadCart({required this.cartType});
+}
