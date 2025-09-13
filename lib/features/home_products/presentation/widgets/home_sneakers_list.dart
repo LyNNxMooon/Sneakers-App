@@ -27,7 +27,7 @@ class HomeSneakersList extends StatelessWidget {
               crossAxisCount: columnCount,
               mainAxisSpacing: 15,
               crossAxisSpacing: 15,
-              childAspectRatio: 0.7),
+              childAspectRatio: 0.67),
           itemBuilder: (context, index) =>
               itemCard(sneakersList[index], index, context),
           itemCount: sneakersList.length,
@@ -86,8 +86,8 @@ class HomeSneakersList extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Text(
-                  sneaker.title.length > 30
-                      ? "${sneaker.title.substring(0, 30)} ..."
+                  sneaker.title.length > 27
+                      ? "${sneaker.title.substring(0, 27)} ..."
                       : sneaker.title,
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),

@@ -89,8 +89,8 @@ class _IndexPageState extends State<IndexPage> {
 
           // Floating Glass Nav Bar
           Positioned(
-            left: 45,
-            right: 45,
+            left: 25,
+            right: 25,
             bottom: 60,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(25),

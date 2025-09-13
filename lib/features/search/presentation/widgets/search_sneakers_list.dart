@@ -82,8 +82,8 @@ class SearchSneakersList extends StatelessWidget {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.45,
                             child: Text(
-                              sneaker.title.length > 22
-                                  ? "${sneaker.title.substring(0, 22)} ..."
+                              sneaker.title.length > 20
+                                  ? "${sneaker.title.substring(0, 20)} ..."
                                   : sneaker.title,
                               style: TextStyle(fontWeight: FontWeight.w600),
                             ),

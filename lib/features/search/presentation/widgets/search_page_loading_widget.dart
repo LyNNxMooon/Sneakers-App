@@ -27,19 +27,19 @@ class SearchPageLoadingWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
-                              width: 80,
+                              width: 90,
                               height: 80,
                               decoration: BoxDecoration(
                                   color: Colors.grey.shade300,
                                   borderRadius: BorderRadius.circular(5)),
                             ),
-                            const Gap(25),
+
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.64,
+                                      MediaQuery.of(context).size.width * 0.6,
                                   height: 15,
                                   decoration: BoxDecoration(
                                       color: Colors.grey.shade300,
