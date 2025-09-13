@@ -167,7 +167,7 @@ class LoadDataOnHomePage implements ILoadDataStrategy {
 class LoadDataOnCartPage implements ILoadDataStrategy {
   @override
   Future<void> loadData(BuildContext context) async {
-    logger.d("Loading data for cart page...");
+    context.read<CartBloc>().add(LoadCart(cartType: CartType.cart));
   }
 }
 
