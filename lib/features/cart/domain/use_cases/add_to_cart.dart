@@ -23,17 +23,20 @@ class AddToCart {
         addingCartFunction = AddCartItemWithShippingDecorator(
             addingCartFunction, shippingType, packageType);
 
-        return addingCartFunction.addToCart(sneaker, qty, package, shipping);
+        return addingCartFunction.addToCart(
+            sneaker, qty, package, shipping, repository);
       }
 
       if (package) {
         addingCartFunction =
             AddCartItemWithPackageDecorator(addingCartFunction, packageType);
 
-        return addingCartFunction.addToCart(sneaker, qty, package, shipping);
+        return addingCartFunction.addToCart(
+            sneaker, qty, package, shipping, repository);
       }
 
-      return addingCartFunction.addToCart(sneaker, qty, package, shipping);
+      return addingCartFunction.addToCart(
+          sneaker, qty, package, shipping, repository);
     } catch (error) {
       logger.e("Error occurred when adding cart! Read Error sms on screen!");
       return Future.error(
@@ -70,15 +73,15 @@ class AddToCart {
 //Decorator Pattern
 //Common interface
 abstract class AddCartItem {
-  Future<String> addToCart(
-      SneakerVO sneaker, int qty, bool package, bool shipping);
+  Future<String> addToCart(SneakerVO sneaker, int qty, bool package,
+      bool shipping, CartRepo repository);
 }
 
 //Concrete component (Base Object)
 class AddNormalCartItem implements AddCartItem {
   @override
-  Future<String> addToCart(
-      SneakerVO sneaker, int qty, bool package, bool shipping) async {
+  Future<String> addToCart(SneakerVO sneaker, int qty, bool package,
+      bool shipping, CartRepo repository) async {
     try {
       List sneakersCart = LocalDbDAO.instance.getSneakersCart() ?? [];
 
@@ -97,7 +100,7 @@ class AddNormalCartItem implements AddCartItem {
 
       sneakersCart.add(newItem);
 
-      LocalDbDAO.instance.saveSneakersCart(cart: sneakersCart);
+      repository.addToCart(sneakersCart);
 
       return "Successfully added to cart!";
     } catch (error) {
@@ -114,9 +117,10 @@ class AddCartItemDecorator implements AddCartItem {
   AddCartItemDecorator(this._wrapperAddCartItem);
 
   @override
-  Future<String> addToCart(
-      SneakerVO sneaker, int qty, bool package, bool shipping) async {
-    return _wrapperAddCartItem.addToCart(sneaker, qty, package, shipping);
+  Future<String> addToCart(SneakerVO sneaker, int qty, bool package,
+      bool shipping, CartRepo repository) async {
+    return _wrapperAddCartItem.addToCart(
+        sneaker, qty, package, shipping, repository);
   }
 }
 
@@ -126,11 +130,11 @@ class AddCartItemWithPackageDecorator extends AddCartItemDecorator {
   AddCartItemWithPackageDecorator(super.wrapperAddCartItem, this.packageType);
 
   @override
-  Future<String> addToCart(
-      SneakerVO sneaker, int qty, bool package, bool shipping) async {
+  Future<String> addToCart(SneakerVO sneaker, int qty, bool package,
+      bool shipping, CartRepo repository) async {
     try {
       String returnMessage =
-          await super.addToCart(sneaker, qty, package, shipping);
+          await super.addToCart(sneaker, qty, package, shipping, repository);
       List packageCart = LocalDbDAO.instance.getPackageCart() ?? [];
 
       PackageItemVO newPackageItem = PackageItemVO(
@@ -163,11 +167,11 @@ class AddCartItemWithShippingDecorator extends AddCartItemDecorator {
       super.wrapperAddCartItem, this.shippingType, this.packageType);
 
   @override
-  Future<String> addToCart(
-      SneakerVO sneaker, int qty, bool package, bool shipping) async {
+  Future<String> addToCart(SneakerVO sneaker, int qty, bool package,
+      bool shipping, CartRepo repository) async {
     try {
       String returnMessage =
-          await super.addToCart(sneaker, qty, package, shipping);
+          await super.addToCart(sneaker, qty, package, shipping, repository);
       List shippingCart = LocalDbDAO.instance.getShippingCart() ?? [];
 
       ShippingItemVO newShippingItem = ShippingItemVO(

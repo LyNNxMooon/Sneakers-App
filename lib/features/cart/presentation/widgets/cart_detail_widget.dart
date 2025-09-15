@@ -15,7 +15,7 @@ class CartDetailWidget extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 20),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      height: 105,
+      height: 120,
       decoration: BoxDecoration(
         color: kPrimaryColor,
         borderRadius: BorderRadius.circular(12), // Slightly rounded corners
@@ -68,8 +68,7 @@ class CartDetailWidget extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black87,
                   foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 16),
+                  padding: EdgeInsets.symmetric(horizontal: 16),
                   textStyle:
                       TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   shape: RoundedRectangleBorder(
@@ -78,7 +77,10 @@ class CartDetailWidget extends StatelessWidget {
                   elevation: 5,
                   shadowColor: Colors.black45,
                 ),
-                child: Text("Order", style: TextStyle(fontSize: 12),),
+                child: Text(
+                  "Order",
+                  style: TextStyle(fontSize: 12),
+                ),
               )
             ],
           )
