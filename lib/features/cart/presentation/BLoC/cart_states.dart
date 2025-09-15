@@ -22,6 +22,12 @@ class CartsLoaded extends CartStates {
   CartsLoaded(this.cart);
 }
 
+class RemovedFromCart extends CartStates {
+  final String message;
+
+  RemovedFromCart(this.message);
+}
+
 class CartError extends CartStates {
   final String message;
 

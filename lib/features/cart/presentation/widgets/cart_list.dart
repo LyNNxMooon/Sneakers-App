@@ -2,14 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart'
     show CupertinoActivityIndicator, CupertinoIcons;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:gap/gap.dart';
 import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
 import 'package:sneakers_app/entities/vos/package_item_vo.dart';
 import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
+import 'package:sneakers_app/features/cart/presentation/BLoC/cart_states.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../../../constants/colors.dart';
 import '../../../../constants/images.dart';
+import '../../../../utils/enums.dart';
+import '../BLoC/cart_bloc.dart';
+import '../BLoC/cart_events.dart';
 
 class CartList extends StatelessWidget {
   const CartList({super.key, required this.cart});
@@ -52,15 +59,60 @@ class CartList extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Center(
-                      child: Icon(
-                        Icons.delete,
-                        size: 18,
-                        color: kThirdColor,
-                      ),
-                    ),
+                  BlocConsumer<CartBloc, CartStates>(
+                    builder: (context, state) {
+                      if (state is CartLoading) {
+                        return GestureDetector(
+                          onTap: () {},
+                          child: Center(
+                            child: Icon(
+                              Icons.delete,
+                              size: 18,
+                              color: kThirdColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          context
+                              .read<CartBloc>()
+                              .add(RemoveCartEvent(cartItem, null, null));
+
+                          context
+                              .read<CartBloc>()
+                              .add(LoadCart(cartType: CartType.cart));
+                        },
+                        child: Center(
+                          child: Icon(
+                            Icons.delete,
+                            size: 18,
+                            color: kThirdColor,
+                          ),
+                        ),
+                      );
+                    },
+                    listener: (context, state) {
+                      if (state is CartError) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.error(
+                            message: state.message,
+                          ),
+                        );
+                      }
+
+                      if (state is RemovedFromCart) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.success(
+                            maxLines: 5,
+                            message: state.message,
+                          ),
+                        );
+                      }
+                    },
                   ),
                   Container(
                     decoration:
@@ -218,15 +270,60 @@ class PackageCartList extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Center(
-                      child: Icon(
-                        Icons.delete,
-                        size: 18,
-                        color: kThirdColor,
-                      ),
-                    ),
+                  BlocConsumer<CartBloc, CartStates>(
+                    builder: (context, state) {
+                      if (state is CartLoading) {
+                        return GestureDetector(
+                          onTap: () {},
+                          child: Center(
+                            child: Icon(
+                              Icons.delete,
+                              size: 18,
+                              color: kThirdColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          context
+                              .read<CartBloc>()
+                              .add(RemoveCartEvent(null, cartItem, null));
+
+                          context
+                              .read<CartBloc>()
+                              .add(LoadCart(cartType: CartType.packageCart));
+                        },
+                        child: Center(
+                          child: Icon(
+                            Icons.delete,
+                            size: 18,
+                            color: kThirdColor,
+                          ),
+                        ),
+                      );
+                    },
+                    listener: (context, state) {
+                      if (state is CartError) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.error(
+                            message: state.message,
+                          ),
+                        );
+                      }
+
+                      if (state is RemovedFromCart) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.success(
+                            maxLines: 5,
+                            message: state.message,
+                          ),
+                        );
+                      }
+                    },
                   ),
                   Container(
                     decoration:
@@ -372,15 +469,60 @@ class ShippingCartList extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  GestureDetector(
-                    onTap: () {},
-                    child: Center(
-                      child: Icon(
-                        Icons.delete,
-                        size: 18,
-                        color: kThirdColor,
-                      ),
-                    ),
+                  BlocConsumer<CartBloc, CartStates>(
+                    builder: (context, state) {
+                      if (state is CartLoading) {
+                        return GestureDetector(
+                          onTap: () {},
+                          child: Center(
+                            child: Icon(
+                              Icons.delete,
+                              size: 18,
+                              color: kThirdColor,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return GestureDetector(
+                        onTap: () {
+                          context
+                              .read<CartBloc>()
+                              .add(RemoveCartEvent(null, null, cartItem));
+
+                          context
+                              .read<CartBloc>()
+                              .add(LoadCart(cartType: CartType.shippingCart));
+                        },
+                        child: Center(
+                          child: Icon(
+                            Icons.delete,
+                            size: 18,
+                            color: kThirdColor,
+                          ),
+                        ),
+                      );
+                    },
+                    listener: (context, state) {
+                      if (state is CartError) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.error(
+                            message: state.message,
+                          ),
+                        );
+                      }
+
+                      if (state is RemovedFromCart) {
+                        showTopSnackBar(
+                          Overlay.of(context),
+                          CustomSnackBar.success(
+                            maxLines: 5,
+                            message: state.message,
+                          ),
+                        );
+                      }
+                    },
                   ),
                   Container(
                     decoration:

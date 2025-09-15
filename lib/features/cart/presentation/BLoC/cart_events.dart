@@ -1,3 +1,6 @@
+import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
+import 'package:sneakers_app/entities/vos/package_item_vo.dart';
+import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:sneakers_app/utils/enums.dart';
 
@@ -20,7 +23,13 @@ class AddToCartEvent extends CartEvents {
       this.shippingType = ""});
 }
 
-class RemoveCart extends CartEvents {}
+class RemoveCartEvent extends CartEvents {
+  final CartItemVO? cartItem;
+  final PackageItemVO? packageItem;
+  final ShippingItemVO? shippingItem;
+
+  RemoveCartEvent(this.cartItem, this.packageItem, this.shippingItem);
+}
 
 class UpdateCart extends CartEvents {}
 
