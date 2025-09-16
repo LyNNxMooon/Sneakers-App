@@ -92,10 +92,6 @@ class _PackagingShippingDialogState extends State<PackagingShippingDialog> {
                     shipping: _selectedShipping != null,
                     packageType: _selectedPackaging ?? "",
                     shippingType: _selectedShipping ?? ""));
-
-                if (state is AddedToCart) {
-                  context.navigateBack();
-                }
               },
               child: Text("OK", style: TextStyle(color: Colors.white)),
             );
@@ -111,6 +107,7 @@ class _PackagingShippingDialogState extends State<PackagingShippingDialog> {
             }
 
             if (state is AddedToCart) {
+              context.navigateBack();
               showTopSnackBar(
                 Overlay.of(context),
                 CustomSnackBar.success(

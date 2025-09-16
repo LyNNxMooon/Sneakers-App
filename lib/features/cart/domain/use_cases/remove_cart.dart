@@ -32,7 +32,7 @@ class RemoveCart {
         return strategy.removeCart();
       }
     } catch (error) {
-      logger.e("Error occurred when removing cart! Read Error sms on screen!");
+      logger.e("Error occurred when removing cart! Error: $error");
       return Future.error(
           "Error occurred when removing to cart! Please try again with correct parameters. Error sms: $error");
     }
@@ -55,15 +55,30 @@ class RemoveCartItem implements IRemoveCartStrategy {
   Future<String> removeCart() async {
     try {
       List cart = LocalDbDAO.instance.getSneakersCart() ?? [];
+      List packageCart = LocalDbDAO.instance.getPackageCart() ?? [];
+      List shippingCart = LocalDbDAO.instance.getShippingCart() ?? [];
 
       cart.remove(cartItem);
 
+      for (PackageItemVO packageItem in List.from(packageCart)) {
+        if (packageItem.id == cartItem.id) {
+          packageCart.remove(packageItem);
+        }
+      }
+
+      for (ShippingItemVO shippingItem in List.from(shippingCart)) {
+        if (shippingItem.id == cartItem.id) {
+          shippingCart.remove(shippingItem);
+        }
+      }
+
       repository.removeCart(cart);
+      LocalDbDAO.instance.savePackageCart(cart: packageCart);
+      LocalDbDAO.instance.saveShippingCart(cart: shippingCart);
 
       return "Successfully removed from cart!";
     } catch (error) {
-      logger.e(
-          "Error occurred on removing the cart item! Read message on screen");
+      logger.e("Error occurred on removing the cart item! Error: $error");
       return Future.error(
           "Error occurred while removing the cart item! Please try again! Error sms: $error");
     }
@@ -85,7 +100,7 @@ class RemovePackageItem implements IRemoveCartStrategy {
 
       packageCart.remove(packageItem);
 
-      for (CartItemVO cartItem in cart) {
+      for (CartItemVO cartItem in List.from(cart)) {
         if (cartItem.id == packageItem.id) {
           cart.remove(cartItem);
         }
@@ -120,13 +135,13 @@ class RemoveShippingItem implements IRemoveCartStrategy {
 
       shippingCart.remove(shippingItem);
 
-      for (PackageItemVO packageItem in packageCart) {
+      for (PackageItemVO packageItem in List.from(packageCart)) {
         if (packageItem.id == shippingItem.id) {
           packageCart.remove(packageItem);
         }
       }
 
-      for (CartItemVO cartItem in cart) {
+      for (CartItemVO cartItem in List.from(cart)) {
         if (cartItem.id == shippingItem.id) {
           cart.remove(cartItem);
         }

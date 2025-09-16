@@ -11,7 +11,8 @@ import '../../../../constants/colors.dart';
 import '../../../cart/presentation/BLoC/cart_events.dart';
 
 class PackageAndShippingDialogForSearchPage extends StatefulWidget {
-  const PackageAndShippingDialogForSearchPage({super.key, required this.sneaker});
+  const PackageAndShippingDialogForSearchPage(
+      {super.key, required this.sneaker});
 
   final SneakerVO sneaker;
 
@@ -20,7 +21,8 @@ class PackageAndShippingDialogForSearchPage extends StatefulWidget {
       _PackageAndShippingDialogForSearchPageState();
 }
 
-class _PackageAndShippingDialogForSearchPageState extends State<PackageAndShippingDialogForSearchPage> {
+class _PackageAndShippingDialogForSearchPageState
+    extends State<PackageAndShippingDialogForSearchPage> {
   String? _selectedPackaging;
   String? _selectedShipping;
 
@@ -92,10 +94,6 @@ class _PackageAndShippingDialogForSearchPageState extends State<PackageAndShippi
                     shipping: _selectedShipping != null,
                     packageType: _selectedPackaging ?? "",
                     shippingType: _selectedShipping ?? ""));
-
-                if (state is AddedToCart) {
-                  context.navigateBack();
-                }
               },
               child: Text("OK", style: TextStyle(color: Colors.white)),
             );
@@ -111,6 +109,7 @@ class _PackageAndShippingDialogForSearchPageState extends State<PackageAndShippi
             }
 
             if (state is AddedToCart) {
+              context.navigateBack();
               showTopSnackBar(
                 Overlay.of(context),
                 CustomSnackBar.success(
