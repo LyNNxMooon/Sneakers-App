@@ -9,11 +9,13 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
   final AddToCart addToCartUseCase;
   final LoadCartUseCase loadCartUseCase;
   final RemoveCart removeCartUseCase;
+  final LoadCartCountUseCase loadCartCountUseCase;
 
   CartBloc(
       {required this.addToCartUseCase,
       required this.loadCartUseCase,
-      required this.removeCartUseCase})
+      required this.removeCartUseCase,
+      required this.loadCartCountUseCase})
       : super(CartInitial()) {
     on<AddToCartEvent>(_onAddToCart);
     on<LoadCart>(_onLoadCart);
@@ -64,7 +66,11 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
     try {
       final List loadedCart = await loadCartUseCase(event.cartType);
 
-      emit(CartsLoaded(loadedCart));
+      emit(CartsLoaded(
+          loadedCart,
+          event.context.mounted
+              ? await loadCartCountUseCase(event.context)
+              : 0));
     } catch (error) {
       emit(CartError('$error'));
     }

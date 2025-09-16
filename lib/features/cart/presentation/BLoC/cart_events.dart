@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
 import 'package:sneakers_app/entities/vos/package_item_vo.dart';
 import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
@@ -35,6 +36,7 @@ class UpdateCart extends CartEvents {}
 
 class LoadCart extends CartEvents {
   final CartType cartType;
+  final BuildContext context;
 
-  LoadCart({required this.cartType});
+  LoadCart({required this.cartType, required this.context});
 }

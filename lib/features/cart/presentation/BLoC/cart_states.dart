@@ -18,8 +18,9 @@ class AddedToCart extends CartStates {
 
 class CartsLoaded extends CartStates {
   final List cart;
+  final int count;
 
-  CartsLoaded(this.cart);
+  CartsLoaded(this.cart, this.count);
 }
 
 class RemovedFromCart extends CartStates {

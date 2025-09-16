@@ -27,7 +27,10 @@ Future<void> init() async {
   sl.registerFactory(
       () => SearchSneakersBloc(fetchSneakers: sl(), searchSneakers: sl()));
   sl.registerFactory(() => CartBloc(
-      addToCartUseCase: sl(), loadCartUseCase: sl(), removeCartUseCase: sl()));
+      addToCartUseCase: sl(),
+      loadCartUseCase: sl(),
+      removeCartUseCase: sl(),
+      loadCartCountUseCase: sl()));
 
   //Repos
   sl.registerLazySingleton<HomeProductsRepo>(() => FetchingSneakersModel());
@@ -43,4 +46,5 @@ Future<void> init() async {
   sl.registerLazySingleton(() => AddToCart(sl()));
   sl.registerLazySingleton(() => LoadCartUseCase(sl()));
   sl.registerLazySingleton(() => RemoveCart(sl()));
+  sl.registerLazySingleton(() => LoadCartCountUseCase());
 }

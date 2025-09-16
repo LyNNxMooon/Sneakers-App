@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
 import 'package:sneakers_app/utils/enums.dart';
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../../../local_db/hive_dao.dart';
 import '../../../../utils/log_util.dart';
@@ -45,5 +48,85 @@ class LoadCartUseCase {
     } catch (error) {
       return null;
     }
+  }
+}
+
+class LoadCartCountUseCase {
+  Future<int> call(BuildContext context) async {
+    try {
+      final notifier = CountNotifier();
+
+      final countObserver = CountChannel();
+      final snackBarAlertObserver = SnackBarAlertChannel(context: context);
+
+      notifier.subscribe(countObserver);
+      notifier.subscribe(snackBarAlertObserver);
+
+      return notifier.notifyCount();
+    } catch (error) {
+      logger.e("Error showing cart count! Error: $error");
+      return Future.error("Error showing cart count! Error: $error");
+    }
+  }
+}
+
+//Observer Interface
+abstract class ICountChannel {
+  int update();
+}
+
+//Subject (Observable)
+class CountNotifier {
+  final List<ICountChannel> _channels = [];
+
+  void subscribe(ICountChannel channel) {
+    _channels.add(channel);
+  }
+
+  void unsubscribe(ICountChannel channel) {
+    _channels.remove(channel);
+  }
+
+  int _notifyChannels() {
+    int count = 0;
+    for (final channel in _channels) {
+      count = channel.update();
+    }
+
+    return count;
+  }
+
+  int notifyCount() {
+    return _notifyChannels();
+  }
+}
+
+//Concrete class: provide count
+class CountChannel implements ICountChannel {
+  @override
+  int update() {
+    List cart = LocalDbDAO.instance.getSneakersCart() ?? [];
+
+    return cart.length;
+  }
+}
+
+//Concrete class : Snack bar count alert
+class SnackBarAlertChannel implements ICountChannel {
+  final BuildContext context;
+
+  SnackBarAlertChannel({required this.context});
+  @override
+  int update() {
+    List cart = LocalDbDAO.instance.getSneakersCart() ?? [];
+
+    showTopSnackBar(
+      Overlay.of(context),
+      CustomSnackBar.success(
+        message: "You now have ${cart.length} in your cart!",
+      ),
+    );
+
+    return cart.length;
   }
 }

@@ -8,6 +8,7 @@ import 'package:sneakers_app/utils/navigation_extension.dart';
 import 'package:top_snackbar_flutter/top_snack_bar.dart';
 import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 import '../../../../constants/colors.dart';
+import '../../../../utils/enums.dart';
 import '../../../cart/presentation/BLoC/cart_events.dart';
 
 class PackageAndShippingDialogForSearchPage extends StatefulWidget {
@@ -94,6 +95,8 @@ class _PackageAndShippingDialogForSearchPageState
                     shipping: _selectedShipping != null,
                     packageType: _selectedPackaging ?? "",
                     shippingType: _selectedShipping ?? ""));
+
+                context.read<CartBloc>().add(LoadCart(cartType: CartType.cart, context: context));
               },
               child: Text("OK", style: TextStyle(color: Colors.white)),
             );

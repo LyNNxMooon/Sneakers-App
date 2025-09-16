@@ -80,9 +80,8 @@ class CartList extends StatelessWidget {
                               .read<CartBloc>()
                               .add(RemoveCartEvent(cartItem, null, null));
 
-                          context
-                              .read<CartBloc>()
-                              .add(LoadCart(cartType: CartType.cart));
+                          context.read<CartBloc>().add(LoadCart(
+                              cartType: CartType.cart, context: context));
                         },
                         child: Center(
                           child: Icon(
@@ -291,9 +290,9 @@ class PackageCartList extends StatelessWidget {
                               .read<CartBloc>()
                               .add(RemoveCartEvent(null, cartItem, null));
 
-                          context
-                              .read<CartBloc>()
-                              .add(LoadCart(cartType: CartType.packageCart));
+                          context.read<CartBloc>().add(LoadCart(
+                              cartType: CartType.packageCart,
+                              context: context));
                         },
                         child: Center(
                           child: Icon(
@@ -490,9 +489,9 @@ class ShippingCartList extends StatelessWidget {
                               .read<CartBloc>()
                               .add(RemoveCartEvent(null, null, cartItem));
 
-                          context
-                              .read<CartBloc>()
-                              .add(LoadCart(cartType: CartType.shippingCart));
+                          context.read<CartBloc>().add(LoadCart(
+                              cartType: CartType.shippingCart,
+                              context: context));
                         },
                         child: Center(
                           child: Icon(

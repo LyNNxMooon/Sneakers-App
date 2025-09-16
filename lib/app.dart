@@ -43,8 +43,8 @@ class MyApp extends StatelessWidget {
                     : LocalDbDAO.instance.getLastSearchedSneakerPage()!)),
         ),
         BlocProvider<CartBloc>(
-            create: (_) =>
-                sl<CartBloc>()..add(LoadCart(cartType: CartType.cart)))
+            create: (_) => sl<CartBloc>()
+              ..add(LoadCart(cartType: CartType.cart, context: context)))
       ],
       child: MaterialApp(
         title: "Sneakers App",
@@ -167,7 +167,9 @@ class LoadDataOnHomePage implements ILoadDataStrategy {
 class LoadDataOnCartPage implements ILoadDataStrategy {
   @override
   Future<void> loadData(BuildContext context) async {
-    context.read<CartBloc>().add(LoadCart(cartType: CartType.cart));
+    context
+        .read<CartBloc>()
+        .add(LoadCart(cartType: CartType.cart, context: context));
   }
 }
 

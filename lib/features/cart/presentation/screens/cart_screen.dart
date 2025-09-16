@@ -246,7 +246,7 @@ class _CartScreenState extends State<CartScreen> {
           onChanged: (CartType? newValue) {
             setState(() {
               selectedValue = newValue!;
-              context.read<CartBloc>().add(LoadCart(cartType: selectedValue));
+              context.read<CartBloc>().add(LoadCart(cartType: selectedValue, context: context));
             });
           },
         ),
