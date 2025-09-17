@@ -97,6 +97,7 @@ class RemovePackageItem implements IRemoveCartStrategy {
     try {
       List cart = LocalDbDAO.instance.getSneakersCart() ?? [];
       List packageCart = LocalDbDAO.instance.getPackageCart() ?? [];
+      List shippingCart = LocalDbDAO.instance.getShippingCart() ?? [];
 
       packageCart.remove(packageItem);
 
@@ -106,8 +107,15 @@ class RemovePackageItem implements IRemoveCartStrategy {
         }
       }
 
+      for (ShippingItemVO shippingItem in List.from(shippingCart)) {
+        if (shippingItem.id == packageItem.id) {
+          shippingCart.remove(shippingItem);
+        }
+      }
+
       repository.removeCart(cart);
       LocalDbDAO.instance.savePackageCart(cart: packageCart);
+      LocalDbDAO.instance.saveShippingCart(cart: shippingCart);
 
       return "Successfully removed from cart!";
     } catch (error) {

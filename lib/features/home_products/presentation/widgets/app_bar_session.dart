@@ -1,11 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import 'package:sneakers_app/constants/colors.dart';
 import 'package:sneakers_app/constants/images.dart';
 import 'package:sneakers_app/constants/txt_styles.dart';
+import 'package:sneakers_app/features/cart/presentation/BLoC/cart_bloc.dart';
+import 'package:sneakers_app/features/cart/presentation/BLoC/cart_states.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({super.key});
@@ -22,7 +25,6 @@ class CustomAppBar extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  
                   width: 55,
                   height: 55,
                   decoration: BoxDecoration(
@@ -58,9 +60,51 @@ class CustomAppBar extends StatelessWidget {
                   icon: Icon(Icons.notifications_active_outlined),
                   onPressed: () {},
                 ),
-                IconButton(
-                  icon: Icon(Icons.shopping_cart_outlined),
-                  onPressed: () {},
+                const Gap(5),
+                SizedBox(
+                  width: 40,
+                  height: 45,
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.center,
+                        child: IconButton(
+                          icon: Icon(Icons.shopping_cart_outlined),
+                          onPressed: () {},
+                        ),
+                      ),
+                      BlocBuilder<CartBloc, CartStates>(
+                        builder: (_, state) {
+                          if (state is CartsLoaded && state.count != 0) {
+                            return Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 18,
+                                height: 18,
+                                decoration: BoxDecoration(
+                                    color: kCartCountColor,
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  child: Center(
+                                    child: Text(
+                                      state.count.toString(),
+                                      style: TextStyle(
+                                          color: kPrimaryColor,
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return const SizedBox();
+                        },
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),

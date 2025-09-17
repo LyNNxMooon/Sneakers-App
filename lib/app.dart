@@ -14,7 +14,6 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_bloc.dart';
 import 'package:sneakers_app/utils/dependency_injection_utils.dart';
-import 'package:sneakers_app/utils/log_util.dart';
 import 'package:sneakers_app/utils/enums.dart';
 import 'features/home_products/presentation/BLoC/home_sneakers_event.dart';
 import 'features/search/presentation/BLoC/search_sneakers_event.dart';
@@ -42,9 +41,7 @@ class MyApp extends StatelessWidget {
                     ? 1
                     : LocalDbDAO.instance.getLastSearchedSneakerPage()!)),
         ),
-        BlocProvider<CartBloc>(
-            create: (_) => sl<CartBloc>()
-              ..add(LoadCart(cartType: CartType.cart, context: context)))
+        BlocProvider<CartBloc>(create: (_) => sl<CartBloc>())
       ],
       child: MaterialApp(
         title: "Sneakers App",
@@ -78,6 +75,14 @@ class _IndexPageState extends State<IndexPage> {
     LoadDataOnCartPage(),
     LoadDataOnSearchPage()
   ];
+
+  @override
+  void initState() {
+    context
+        .read<CartBloc>()
+        .add(LoadCart(cartType: CartType.cart, context: context));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

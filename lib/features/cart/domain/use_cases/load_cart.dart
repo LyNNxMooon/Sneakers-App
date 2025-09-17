@@ -1,3 +1,4 @@
+import 'package:alert_info/alert_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
 import 'package:sneakers_app/utils/enums.dart';
@@ -120,12 +121,11 @@ class SnackBarAlertChannel implements ICountChannel {
   int update() {
     List cart = LocalDbDAO.instance.getSneakersCart() ?? [];
 
-    showTopSnackBar(
-      Overlay.of(context),
-      CustomSnackBar.success(
-        message: "You now have ${cart.length} in your cart!",
-      ),
-    );
+    AlertInfo.show(
+        context: context,
+        text: 'You now have ${cart.length} items in cart!',
+        position: MessagePosition.bottom,
+        typeInfo: TypeInfo.success);
 
     return cart.length;
   }
