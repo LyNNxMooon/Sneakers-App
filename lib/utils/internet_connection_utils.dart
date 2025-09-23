@@ -5,7 +5,10 @@ class InternetConnectionUtils {
 
   static final InternetConnectionUtils _instance = InternetConnectionUtils._();
 
-  static InternetConnectionUtils get instance => _instance;
+  static InternetConnectionUtils get instance => _overrideInstance ?? _instance;
+
+  static InternetConnectionUtils? _overrideInstance;
+  static set testInstance(InternetConnectionUtils? dao) => _overrideInstance = dao;
 
   Future<bool> checkInternetConnection() async {
     var connectivityResults = await Connectivity().checkConnectivity();

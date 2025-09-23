@@ -14,7 +14,11 @@ class LocalDbDAO {
 
   static final LocalDbDAO _instance = LocalDbDAO._();
 
-  static LocalDbDAO get instance => _instance;
+  static LocalDbDAO get instance => _overrideInstance ?? _instance;
+
+  static LocalDbDAO? _overrideInstance;
+  static set testInstance(LocalDbDAO? dao) => _overrideInstance = dao;
+
 
   Future<void> initDB() async {
     try {
