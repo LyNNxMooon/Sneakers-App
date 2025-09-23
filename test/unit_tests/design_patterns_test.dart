@@ -5,6 +5,8 @@ import 'package:sneakers_app/entities/response/sneakers_response.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/fetch_and_display_sneakers.dart';
+import 'package:sneakers_app/features/home_products/domain/use_cases/search_sneakers.dart';
+import 'package:sneakers_app/features/search/domain/use_cases/search_sneakers.dart';
 import 'package:sneakers_app/local_db/hive_dao.dart';
 import 'package:sneakers_app/utils/internet_connection_utils.dart';
 
@@ -22,13 +24,16 @@ void main() {
   late MockLocalDbDAO mockDb;
   late MockInternetUtil mockInternet;
   late FetchAndDisplaySneakers facade;
+  late SearchHomePageSneakers homePageSearchStrategy;
+  late SearchSneakers searchPageStrategy;
 
   setUp(() {
     mockRepo = MockHomeProductsRepo();
     mockDb = MockLocalDbDAO();
     mockInternet = MockInternetUtil();
     facade = FetchAndDisplaySneakers(mockRepo);
-
+    homePageSearchStrategy = SearchHomePageSneakers();
+    searchPageStrategy = SearchSneakers();
     LocalDbDAO.testInstance = mockDb;
     InternetConnectionUtils.testInstance = mockInternet;
   });
@@ -232,5 +237,106 @@ void main() {
     final result = await facade.call(1);
 
     expect(result, cachedResponse);
+  });
+
+  //Search Home page Sneakers - Strategy - Searching algorithms (Binary)
+  group('SearchHomePageSneakers', () {
+    setUp(() {
+      final fakeResponse = SneakersResponse(
+          data: testSneakers,
+          meta: MetaResponse(currentPage: 1, total: 10, perPage: 20));
+
+      when(() => mockDb.getSneakers()).thenReturn(fakeResponse);
+    });
+
+    test('search by title returns matching sneakers', () async {
+      final result = await homePageSearchStrategy.call("Air", "", "");
+
+      expect(result.data.map((sneaker) => sneaker.title),
+          containsAll(["Air Max 90", "Air Jordan 1"]));
+    });
+
+    test('search by model returns matching sneaker', () async {
+      final result = await homePageSearchStrategy.call("", "YB350", "");
+      expect(result.data.single.title, "Yeezy Boost 350");
+    });
+
+    test('search by sku returns matching sneaker', () async {
+      final result = await homePageSearchStrategy.call("", "", "AJ1-002");
+      expect(result.data.single.title, "Air Jordan 1");
+    });
+
+    test('empty search returns all sneakers', () async {
+      final result = await homePageSearchStrategy.call("", "", "");
+      expect(result.data.length, 10);
+    });
+
+    test('composite search filters correctly', () async {
+      final result = await homePageSearchStrategy.call("Air", "AJ1", "");
+      expect(result.data.single.title, "Air Jordan 1");
+    });
+
+    test('search not found returns empty', () async {
+      final result = await homePageSearchStrategy.call("NotExist", "", "");
+      expect(result.data, isEmpty);
+    });
+  });
+
+  //Search page Sneakers - Strategy - Searching algorithms (Binary)
+  group('SearchPageSneakers', () {
+    setUp(() {
+      final fakeResponse = SneakersResponse(
+          data: testSneakers,
+          meta: MetaResponse(currentPage: 1, total: 10, perPage: 20));
+
+      when(() => mockDb.getSearchedSneakers()).thenReturn(fakeResponse);
+    });
+
+    test('search by title returns matching sneakers', () async {
+      final result = await searchPageStrategy.call("Air", "", "", "");
+
+      expect(result.data.map((sneaker) => sneaker.title),
+          containsAll(["Air Max 90", "Air Jordan 1"]));
+    });
+
+    test('search by model returns matching sneaker', () async {
+      final result = await searchPageStrategy.call("", "YB350", "", "");
+      expect(result.data.single.title, "Yeezy Boost 350");
+    });
+
+    test('search by sku returns matching sneaker', () async {
+      final result = await searchPageStrategy.call("", "", "AJ1-002", "");
+      expect(result.data.single.title, "Air Jordan 1");
+    });
+
+    test('search by 2nd Cat returns matching sneaker', () async {
+      final result = await searchPageStrategy.call("", "", "", "Lifestyle");
+
+      expect(
+          result.data.map((sneaker) => sneaker.title),
+          containsAll([
+            "Air Max 90",
+            "Air Jordan 1",
+            "Chuck Taylor All Star",
+            "New Balance 574",
+            "Stan Smith"
+          ]));
+    });
+
+    test('empty search returns all sneakers', () async {
+      final result = await searchPageStrategy.call("", "", "", "");
+      expect(result.data.length, 10);
+    });
+
+    test('composite search filters correctly', () async {
+      final result =
+          await searchPageStrategy.call("Stan", "", "SS-010", "Lifestyle");
+      expect(result.data.single.title, "Stan Smith");
+    });
+
+    test('search not found returns empty', () async {
+      final result = await searchPageStrategy.call("NotExist", "", "", "");
+      expect(result.data, isEmpty);
+    });
   });
 }
