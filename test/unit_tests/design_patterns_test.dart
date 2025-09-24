@@ -2,10 +2,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sneakers_app/entities/response/meta_response.dart';
 import 'package:sneakers_app/entities/response/sneakers_response.dart';
+import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
+import 'package:sneakers_app/entities/vos/package_item_vo.dart';
+import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
 import 'package:sneakers_app/features/cart/domain/use_cases/add_to_cart.dart';
 import 'package:sneakers_app/features/cart/domain/use_cases/load_cart.dart';
+import 'package:sneakers_app/features/cart/domain/use_cases/remove_cart.dart';
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/fetch_and_display_sneakers.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/search_sneakers.dart';
@@ -36,6 +40,7 @@ void main() {
   late SearchSneakers searchPageStrategy;
   late AddToCart addToCartDecorator;
   late LoadCartUseCase loadCartObserver;
+  late RemoveCart removeCartStrategy;
 
   setUp(() {
     mockRepo = MockHomeProductsRepo();
@@ -47,6 +52,7 @@ void main() {
     searchPageStrategy = SearchSneakers();
     addToCartDecorator = AddToCart(mockCartRepo);
     loadCartObserver = LoadCartUseCase(mockCartRepo);
+    removeCartStrategy = RemoveCart(mockCartRepo);
     LocalDbDAO.testInstance = mockDb;
     InternetConnectionUtils.testInstance = mockInternet;
   });
@@ -515,6 +521,112 @@ void main() {
       final count = notifier.notifyCount();
 
       expect(count, 0);
+    });
+  });
+
+  //Remove Cart - Strategy
+  final cartItem = CartItemVO(
+    id: '1',
+    title: 'Air Max 90',
+    brand: 'Nike',
+    model: 'AM90',
+    gender: 'Men',
+    image: 'img.png',
+    sku: 'AM90-001',
+    secondaryCategory: 'Lifestyle',
+    qty: 1,
+    package: false,
+    shipping: false,
+  );
+
+  final packageItem = PackageItemVO(
+    id: '1',
+    title: 'Air Max 90',
+    model: 'AM90',
+    image: 'img.png',
+    sku: 'AM90-001',
+    qty: 1,
+    packageType: 'Gift Wrap',
+  );
+
+  final shippingItem = ShippingItemVO(
+    id: '1',
+    title: 'Air Max 90',
+    model: 'AM90',
+    image: 'img.png',
+    sku: 'AM90-001',
+    qty: 1,
+    packageType: 'Gift Wrap',
+    shippingType: 'Express',
+  );
+
+  group('Remove Cart Test', () {
+    setUp(() {
+      when(() => mockDb.getSneakersCart()).thenReturn([cartItem]);
+      when(() => mockDb.getPackageCart()).thenReturn([packageItem]);
+      when(() => mockDb.getShippingCart()).thenReturn([shippingItem]);
+    });
+
+    test('Removes normal cart item', () async {
+      when(() => mockCartRepo.removeCart(any()))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.savePackageCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.saveShippingCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+
+      final result = await removeCartStrategy.call(cartItem, null, null);
+
+      expect(result, contains('Successfully removed'));
+      verify(() => mockCartRepo.removeCart(any())).called(1);
+      verify(() => mockDb.savePackageCart(cart: any(named: 'cart'))).called(1);
+      verify(() => mockDb.saveShippingCart(cart: any(named: 'cart'))).called(1);
+    });
+
+    test('Removes package item', () async {
+      when(() => mockCartRepo.removeCart(any()))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.savePackageCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.saveShippingCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+
+      final result = await removeCartStrategy.call(null, packageItem, null);
+
+      expect(result, contains('Successfully removed'));
+      verify(() => mockCartRepo.removeCart(any())).called(1);
+      verify(() => mockDb.savePackageCart(cart: any(named: 'cart'))).called(1);
+      verify(() => mockDb.saveShippingCart(cart: any(named: 'cart'))).called(1);
+    });
+
+    test('Removes shipping item', () async {
+      when(() => mockCartRepo.removeCart(any()))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.savePackageCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.saveShippingCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+
+      final result = await removeCartStrategy.call(null, null, shippingItem);
+
+      expect(result, contains('Successfully removed'));
+      verify(() => mockCartRepo.removeCart(any())).called(1);
+      verify(() => mockDb.savePackageCart(cart: any(named: 'cart'))).called(1);
+      verify(() => mockDb.saveShippingCart(cart: any(named: 'cart'))).called(1);
+    });
+
+    test('handles repo error', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn([cartItem]);
+      when(() => mockDb.getPackageCart()).thenReturn([]);
+      when(() => mockDb.getShippingCart()).thenReturn([]);
+
+      when(() => mockCartRepo.removeCart(any()))
+          .thenThrow(Exception('DB fail'));
+
+      expect(
+        () async => await removeCartStrategy.call(cartItem, null, null),
+        throwsA(contains('Error occurred')),
+      );
     });
   });
 }
