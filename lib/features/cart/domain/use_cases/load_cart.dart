@@ -2,8 +2,6 @@ import 'package:alert_info/alert_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
 import 'package:sneakers_app/utils/enums.dart';
-import 'package:top_snackbar_flutter/custom_snack_bar.dart';
-import 'package:top_snackbar_flutter/top_snack_bar.dart';
 
 import '../../../../local_db/hive_dao.dart';
 import '../../../../utils/log_util.dart';

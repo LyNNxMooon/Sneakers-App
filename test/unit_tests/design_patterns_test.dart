@@ -5,11 +5,13 @@ import 'package:sneakers_app/entities/response/sneakers_response.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
 import 'package:sneakers_app/features/cart/domain/use_cases/add_to_cart.dart';
+import 'package:sneakers_app/features/cart/domain/use_cases/load_cart.dart';
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/fetch_and_display_sneakers.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/search_sneakers.dart';
 import 'package:sneakers_app/features/search/domain/use_cases/search_sneakers.dart';
 import 'package:sneakers_app/local_db/hive_dao.dart';
+import 'package:sneakers_app/utils/enums.dart';
 import 'package:sneakers_app/utils/internet_connection_utils.dart';
 
 // Mock Home Repo
@@ -33,6 +35,7 @@ void main() {
   late SearchHomePageSneakers homePageSearchStrategy;
   late SearchSneakers searchPageStrategy;
   late AddToCart addToCartDecorator;
+  late LoadCartUseCase loadCartObserver;
 
   setUp(() {
     mockRepo = MockHomeProductsRepo();
@@ -43,6 +46,7 @@ void main() {
     homePageSearchStrategy = SearchHomePageSneakers();
     searchPageStrategy = SearchSneakers();
     addToCartDecorator = AddToCart(mockCartRepo);
+    loadCartObserver = LoadCartUseCase(mockCartRepo);
     LocalDbDAO.testInstance = mockDb;
     InternetConnectionUtils.testInstance = mockInternet;
   });
@@ -430,6 +434,87 @@ void main() {
       expect(
           () async => await addToCartDecorator.call(sneaker, 1, false, false),
           throwsA(contains('Error adding to cart:')));
+    });
+  });
+
+  //Load Cart - Observer
+  group('Load Cart Test', () {
+    test('loads sneakers cart successfully', () async {
+      when(() => mockCartRepo.getCart(CartType.cart))
+          .thenAnswer((_) async => ['item1', 'item2']);
+
+      final result = await loadCartObserver.call(CartType.cart);
+
+      expect(result.length, 2);
+      verify(() => mockCartRepo.getCart(CartType.cart)).called(1);
+    });
+
+    test('loads package cart successfully', () async {
+      when(() => mockCartRepo.getCart(CartType.packageCart))
+          .thenAnswer((_) async => ['pkg1']);
+
+      final result = await loadCartObserver.call(CartType.packageCart);
+
+      expect(result, contains('pkg1'));
+    });
+
+    test('loads shipping cart successfully', () async {
+      when(() => mockCartRepo.getCart(CartType.shippingCart))
+          .thenAnswer((_) async => ['ship1']);
+
+      final result = await loadCartObserver.call(CartType.shippingCart);
+
+      expect(result, contains('ship1'));
+    });
+
+    test('returns error when repo throws', () async {
+      when(() => mockCartRepo.getCart(CartType.cart))
+          .thenThrow(Exception('DB fail'));
+
+      expect(
+        () async => await loadCartObserver.call(CartType.cart),
+        throwsA(contains('Error occurred when loading cart')),
+      );
+    });
+  });
+
+  //Count Notifier test (Observer pattern)
+
+  group('CountNotifier & Channels', () {
+    test('Count Channel returns the correct cart length', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn(['i1', 'i2']);
+
+      final channel = CountChannel();
+      final result = channel.update();
+
+      expect(result, 2);
+    });
+
+    test('CountNotifier notifies subscribed channels', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn(['i1', 'i2', 'í3']);
+
+      final notifier = CountNotifier();
+      final channel = CountChannel();
+
+      notifier.subscribe(channel);
+
+      final count = notifier.notifyCount();
+
+      expect(count, 3);
+    });
+
+    test('unsubscribe removes channel', () {
+      when(() => mockDb.getSneakersCart()).thenReturn(['i1', 'i2', 'i3']);
+
+      final notifier = CountNotifier();
+      final channel = CountChannel();
+
+      notifier.subscribe(channel);
+      notifier.unsubscribe(channel);
+
+      final count = notifier.notifyCount();
+
+      expect(count, 0);
     });
   });
 }
