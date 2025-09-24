@@ -3,6 +3,8 @@ import 'package:mocktail/mocktail.dart';
 import 'package:sneakers_app/entities/response/meta_response.dart';
 import 'package:sneakers_app/entities/response/sneakers_response.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
+import 'package:sneakers_app/features/cart/domain/repositories/cart_repo.dart';
+import 'package:sneakers_app/features/cart/domain/use_cases/add_to_cart.dart';
 import 'package:sneakers_app/features/home_products/domain/repositories/home_products_repo.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/fetch_and_display_sneakers.dart';
 import 'package:sneakers_app/features/home_products/domain/use_cases/search_sneakers.dart';
@@ -13,6 +15,9 @@ import 'package:sneakers_app/utils/internet_connection_utils.dart';
 // Mock Home Repo
 class MockHomeProductsRepo extends Mock implements HomeProductsRepo {}
 
+//Mock Cart Repo
+class MockCartRepo extends Mock implements CartRepo {}
+
 // Mock Local DB DAO
 class MockLocalDbDAO extends Mock implements LocalDbDAO {}
 
@@ -21,19 +26,23 @@ class MockInternetUtil extends Mock implements InternetConnectionUtils {}
 
 void main() {
   late MockHomeProductsRepo mockRepo;
+  late MockCartRepo mockCartRepo;
   late MockLocalDbDAO mockDb;
   late MockInternetUtil mockInternet;
   late FetchAndDisplaySneakers facade;
   late SearchHomePageSneakers homePageSearchStrategy;
   late SearchSneakers searchPageStrategy;
+  late AddToCart addToCartDecorator;
 
   setUp(() {
     mockRepo = MockHomeProductsRepo();
+    mockCartRepo = MockCartRepo();
     mockDb = MockLocalDbDAO();
     mockInternet = MockInternetUtil();
     facade = FetchAndDisplaySneakers(mockRepo);
     homePageSearchStrategy = SearchHomePageSneakers();
     searchPageStrategy = SearchSneakers();
+    addToCartDecorator = AddToCart(mockCartRepo);
     LocalDbDAO.testInstance = mockDb;
     InternetConnectionUtils.testInstance = mockInternet;
   });
@@ -337,6 +346,90 @@ void main() {
     test('search not found returns empty', () async {
       final result = await searchPageStrategy.call("NotExist", "", "", "");
       expect(result.data, isEmpty);
+    });
+  });
+
+  //Add to cart - Decorator
+  final sneaker = SneakerVO(
+    id: '1',
+    title: 'Air Max 90',
+    brand: 'Nike',
+    model: 'AM90',
+    gender: 'Men',
+    description: '',
+    image: 'image.png',
+    sku: 'AM90-001',
+    category: 'Running',
+    secondaryCategory: 'Lifestyle',
+    productType: 'Shoes',
+  );
+
+  group('Add to Cart Test', () {
+    test('Adds normal Cart item', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn([]);
+      when(() => mockCartRepo.addToCart(any()))
+          .thenAnswer((_) async => Future.value());
+
+      final result = await addToCartDecorator.call(
+        sneaker,
+        1,
+        false,
+        false,
+      );
+
+      expect(result, contains('Successfully added to cart!'));
+      verify(() => mockCartRepo.addToCart(any())).called(1);
+    });
+
+    test('Add to cart with package decorator', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn([]);
+      when(() => mockDb.getPackageCart()).thenReturn([]);
+      when(() => mockCartRepo.addToCart(any()))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.savePackageCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+
+      final result = await addToCartDecorator.call(sneaker, 1, true, false,
+          packageType: 'Plastic Wrapper');
+
+      expect(result, contains('Successfully added to cart!'));
+      expect(result, contains('wrapped with Plastic Wrapper'));
+
+      verify(() => mockDb.savePackageCart(cart: any(named: 'cart'))).called(1);
+    });
+
+    test('Add to cart with package and shipping decorator', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn([]);
+      when(() => mockDb.getPackageCart()).thenReturn([]);
+      when(() => mockDb.getShippingCart()).thenReturn([]);
+
+      when(() => mockCartRepo.addToCart(any()))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.savePackageCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+      when(() => mockDb.saveShippingCart(cart: any(named: 'cart')))
+          .thenAnswer((_) async => Future.value());
+
+      final result = await addToCartDecorator.call(sneaker, 1, true, true,
+          packageType: 'Plastic Wrapper', shippingType: 'Shipment');
+
+      expect(result, contains('Successfully added to cart!'));
+      expect(result, contains('wrapped with Plastic Wrapper'));
+      expect(result, contains('Shipped with Shipment'));
+
+      verify(() => mockDb.savePackageCart(cart: any(named: 'cart'))).called(1);
+      verify(() => mockDb.saveShippingCart(cart: any(named: 'cart'))).called(1);
+    });
+
+    test('handle when repo throws error', () async {
+      when(() => mockDb.getSneakersCart()).thenReturn([]);
+
+      when(() => mockCartRepo.addToCart(any()))
+          .thenThrow(Exception('Db error'));
+
+      expect(
+          () async => await addToCartDecorator.call(sneaker, 1, false, false),
+          throwsA(contains('Error adding to cart:')));
     });
   });
 }
