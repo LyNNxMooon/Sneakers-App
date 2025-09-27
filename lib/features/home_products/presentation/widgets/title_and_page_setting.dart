@@ -37,12 +37,14 @@ class _TitleAndPageSettingState extends State<TitleAndPageSetting> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            widget.sneakerResponse.data.isEmpty? "Sneakers " : "${widget.sneakerResponse.data[0].category} Sneakers",
+            widget.sneakerResponse.data.isEmpty
+                ? "Sneakers "
+                : "${widget.sneakerResponse.data[0].category} Sneakers",
             style: ktitleStyle,
           ),
           Container(
-            //padding: EdgeInsets.symmetric(horizontal: 10),
-            width: 135,
+            padding: EdgeInsets.symmetric(horizontal: 2),
+            //width: 135,
             height: 35,
             decoration: BoxDecoration(
                 border: Border.all(width: 0.8),
@@ -56,7 +58,9 @@ class _TitleAndPageSettingState extends State<TitleAndPageSetting> {
                       setState(() {
                         page--;
                       });
-                      context.read<HomeSneakersBloc>().add(FetchHomeSneakers(page: page));
+                      context
+                          .read<HomeSneakersBloc>()
+                          .add(FetchHomeSneakers(page: page));
                     }
                   },
                   icon: Icon(
@@ -76,7 +80,9 @@ class _TitleAndPageSettingState extends State<TitleAndPageSetting> {
                       setState(() {
                         page++;
                       });
-                      context.read<HomeSneakersBloc>().add(FetchHomeSneakers(page: page));
+                      context
+                          .read<HomeSneakersBloc>()
+                          .add(FetchHomeSneakers(page: page));
                     }
                   },
                   icon: Icon(

@@ -173,3 +173,38 @@ class HomeSneakersList extends StatelessWidget {
     );
   }
 }
+
+/*
+ testWidgets('Bottom navigation bar buttons navigate correctly',
+      (tester) async {
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<HomeSneakersBloc>.value(value: mockHomeSneakersBloc),
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+          BlocProvider<SearchSneakersBloc>.value(value: mockSearchSneakersBloc),
+        ],
+        child: const MaterialApp(home: IndexPage()),
+      ),
+    );
+
+    // Home should be visible first
+    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(CartScreen), findsNothing);
+    expect(find.byType(SearchScreen), findsNothing);
+
+    // Tap Cart tab
+    final cartButton = find.byIcon(LineIcons.shoppingBag);
+    await tester.tap(cartButton);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CartScreen), findsOneWidget);
+
+    // Tap Search tab
+    final searchButton = find.byIcon(LineIcons.search);
+    await tester.tap(searchButton);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SearchScreen), findsOneWidget);
+  });
+ */
