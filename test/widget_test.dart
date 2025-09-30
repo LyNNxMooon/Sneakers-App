@@ -8,7 +8,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,12 +25,16 @@ import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneak
 import 'package:sneakers_app/features/home_products/presentation/screens/home_screen.dart';
 import 'package:sneakers_app/features/home_products/presentation/widgets/home_sneakers_list.dart';
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_bloc.dart';
+import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_event.dart';
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_state.dart';
 import 'package:sneakers_app/features/search/presentation/screens/search_screen.dart';
+import 'package:sneakers_app/features/search/presentation/widgets/search_sneakers_list.dart';
 
 class MockHomeSneakersBloc extends Mock implements HomeSneakersBloc {}
 
 class FakeHomeSneakersEvent extends Fake implements HomeSneakersEvent {}
+
+class FakeSearchSneakersEvent extends Fake implements SearchSneakersEvent {}
 
 class MockCartBloc extends Mock implements CartBloc {}
 
@@ -142,6 +145,7 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(FakeHomeSneakersEvent());
+    registerFallbackValue(FakeSearchSneakersEvent());
   });
 
   setUp(() {
@@ -162,6 +166,8 @@ void main() {
     when(() => mockSearchSneakersBloc.state)
         .thenReturn(SearchSneakersInitial());
   });
+
+  //Home Screen Widgets Tests
 
   testWidgets('typing in search field updates value', (tester) async {
     await tester.pumpWidget(
@@ -308,5 +314,127 @@ void main() {
     await tester.tap(searchTab);
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.byType(SearchScreen), findsOneWidget);
+  });
+
+  //Search Screen Widgets Tests
+
+  testWidgets('typing in search fields of Search page updates value',
+      (tester) async {
+    await tester.pumpWidget(MultiBlocProvider(
+      providers: [
+        BlocProvider<SearchSneakersBloc>.value(
+          value: mockSearchSneakersBloc,
+        )
+      ],
+      child: const MaterialApp(
+        home: Scaffold(
+          body: SearchScreen(),
+        ),
+      ),
+    ));
+
+    final searchFields = find.byType(TextFormField);
+
+    expect(searchFields, findsNWidgets(5));
+    await tester.enterText(searchFields.at(1), 'Air Max');
+
+    await tester.pump();
+
+    expect(find.text('Air Max'), findsOneWidget);
+  });
+
+  testWidgets('tapping search icon on Search Page', (tester) async {
+    when(() => mockSearchSneakersBloc.state)
+        .thenReturn(SearchSneakersLoaded(fakeSneakersResponse));
+
+    await tester.pumpWidget(MultiBlocProvider(
+      providers: [
+        BlocProvider<SearchSneakersBloc>.value(
+          value: mockSearchSneakersBloc,
+        )
+      ],
+      child: const MaterialApp(
+        home: Scaffold(
+          body: SearchScreen(),
+        ),
+      ),
+    ));
+
+    final searchFields = find.byType(TextFormField);
+
+    await tester.enterText(searchFields.at(1), 'Air Max');
+    await tester.pump();
+
+    final searchIconButton = find.byIcon(Icons.search);
+    await tester.tap(searchIconButton);
+    await tester.pump();
+
+    verify(() => mockSearchSneakersBloc.add(any(
+        that: isA<SearchEvent>()
+            .having((e) => e.title, 'title', 'Air Max')
+            .having((e) => e.model, 'model', '')
+            .having((e) => e.sku, 'sku', '')
+            .having((e) => e.secCategory, 'secCategory', '')))).called(1);
+  });
+
+  testWidgets(
+      'entering page number dispatch fetching sneakers and updates UI with new sneakers',
+      (tester) async {
+    whenListen(
+        mockSearchSneakersBloc,
+        Stream.fromIterable([
+          SearchSneakersLoaded(fakeSneakersResponse),
+          SearchSneakersLoaded(fakeSneakersResponsePage2)
+        ]),
+        initialState: SearchSneakersLoaded(fakeSneakersResponse));
+
+    await tester.pumpWidget(MultiBlocProvider(
+      providers: [
+        BlocProvider<SearchSneakersBloc>.value(
+          value: mockSearchSneakersBloc,
+        )
+      ],
+      child: const MaterialApp(
+        home: Scaffold(
+          body: SearchScreen(),
+        ),
+      ),
+    ));
+
+    expect(find.text('Air Max 90'), findsOneWidget);
+
+    final pageField = find.widgetWithText(TextFormField, 'Page..');
+    await tester.enterText(pageField, '2');
+    await tester.pump();
+
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.pump();
+    //expect(find.text('Chuck Taylor All Star'), findsOneWidget);
+
+    verify(() => mockSearchSneakersBloc.add(
+          any(
+            that: isA<FetchSneakersEvent>().having((e) => e.page, 'page', 2),
+          ),
+        )).called(1);
+
+    expect(find.text('Air Max 90'), findsNothing);
+    //await tester.pump(const Duration(seconds: 1));
+    expect(find.text('Chuck Taylor All Sta ...'), findsOneWidget);
+  });
+
+  testWidgets('List item card on Search Page renders correctly',
+      (tester) async {
+    when(() => mockSearchSneakersBloc.state)
+        .thenReturn(SearchSneakersLoaded(fakeSneakersResponse));
+
+    await tester.pumpWidget(MaterialApp(
+      home: SearchSneakersList(
+        sneakersList: fakeSneakersResponse.data,
+      ),
+    ));
+
+    expect(find.text('Air Max 90'), findsOneWidget);
+    expect(find.byIcon(Icons.add_shopping_cart), findsNWidgets(3));
   });
 }
