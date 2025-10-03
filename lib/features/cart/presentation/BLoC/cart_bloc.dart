@@ -1,9 +1,14 @@
 import 'package:bloc/bloc.dart';
+import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
+import 'package:sneakers_app/entities/vos/package_item_vo.dart';
+import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
 import 'package:sneakers_app/features/cart/domain/use_cases/add_to_cart.dart';
 import 'package:sneakers_app/features/cart/domain/use_cases/load_cart.dart';
 import 'package:sneakers_app/features/cart/domain/use_cases/remove_cart.dart';
 import 'package:sneakers_app/features/cart/presentation/BLoC/cart_events.dart';
 import 'package:sneakers_app/features/cart/presentation/BLoC/cart_states.dart';
+
+import '../../../../utils/enums.dart';
 
 class CartBloc extends Bloc<CartEvents, CartStates> {
   final AddToCart addToCartUseCase;
@@ -64,10 +69,25 @@ class CartBloc extends Bloc<CartEvents, CartStates> {
         await loadCartUseCase.getCachedShippingCartWhileLoading()));
 
     try {
-      final List loadedCart = await loadCartUseCase(event.cartType);
+      List<CartItemVO> cart = [];
+      List<PackageItemVO> packageCart = [];
+      List<ShippingItemVO> shippingCart = [];
+
+      if (event.cartType == CartType.cart) {
+        cart =
+            cart = (await loadCartUseCase(event.cartType)).cast<CartItemVO>();
+      } else if (event.cartType == CartType.packageCart) {
+        packageCart =
+            (await loadCartUseCase(event.cartType)).cast<PackageItemVO>();
+      } else {
+        shippingCart =
+            (await loadCartUseCase(event.cartType)).cast<ShippingItemVO>();
+      }
 
       emit(CartsLoaded(
-          loadedCart,
+          cart,
+          packageCart,
+          shippingCart,
           event.context.mounted
               ? await loadCartCountUseCase(event.context)
               : 0));

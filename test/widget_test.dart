@@ -15,10 +15,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sneakers_app/app.dart';
 import 'package:sneakers_app/entities/response/meta_response.dart';
 import 'package:sneakers_app/entities/response/sneakers_response.dart';
+import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
+import 'package:sneakers_app/entities/vos/package_item_vo.dart';
+import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
 import 'package:sneakers_app/entities/vos/sneaker_vo.dart';
 import 'package:sneakers_app/features/cart/presentation/BLoC/cart_bloc.dart';
+import 'package:sneakers_app/features/cart/presentation/BLoC/cart_events.dart';
 import 'package:sneakers_app/features/cart/presentation/BLoC/cart_states.dart';
 import 'package:sneakers_app/features/cart/presentation/screens/cart_screen.dart';
+import 'package:sneakers_app/features/cart/presentation/widgets/cart_list.dart';
 import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_bloc.dart';
 import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_event.dart';
 import 'package:sneakers_app/features/home_products/presentation/BLoC/home_sneakers_state.dart';
@@ -29,6 +34,7 @@ import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_e
 import 'package:sneakers_app/features/search/presentation/BLoC/search_sneakers_state.dart';
 import 'package:sneakers_app/features/search/presentation/screens/search_screen.dart';
 import 'package:sneakers_app/features/search/presentation/widgets/search_sneakers_list.dart';
+import 'package:sneakers_app/utils/enums.dart';
 
 class MockHomeSneakersBloc extends Mock implements HomeSneakersBloc {}
 
@@ -39,6 +45,84 @@ class FakeSearchSneakersEvent extends Fake implements SearchSneakersEvent {}
 class MockCartBloc extends Mock implements CartBloc {}
 
 class MockSearchSneakersBloc extends Mock implements SearchSneakersBloc {}
+
+class FakeCartEvents extends Fake implements CartEvents {}
+
+final fakeCartList = [
+  CartItemVO(
+    id: '1',
+    title: 'Air Max 90',
+    brand: 'Nike',
+    model: 'AM90',
+    gender: 'Men',
+    image: 'air_max_90.png',
+    sku: 'AM90-001',
+    secondaryCategory: 'Lifestyle',
+    qty: 1,
+    package: false,
+    shipping: false,
+  ),
+  CartItemVO(
+    id: '2',
+    title: 'Yeezy Boost 350',
+    brand: 'Adidas',
+    model: 'YB350',
+    gender: 'Unisex',
+    image: 'yeezy_boost_350.png',
+    sku: 'YB350-002',
+    secondaryCategory: 'Running',
+    qty: 2,
+    package: true,
+    shipping: false,
+  ),
+  CartItemVO(
+    id: '3',
+    title: 'Chuck Taylor All Star',
+    brand: 'Converse',
+    model: 'CTAS',
+    gender: 'Women',
+    image: 'chuck_taylor.png',
+    sku: 'CTAS-003',
+    secondaryCategory: 'Casual',
+    qty: 1,
+    package: true,
+    shipping: true,
+  ),
+];
+
+final fakePackageItemList = [
+  PackageItemVO(
+    id: 'P2',
+    title: 'Yeezy Boost 350',
+    model: 'YB350',
+    image: 'yeezy_boost_350.png',
+    sku: 'YB350-002',
+    qty: 2,
+    packageType: 'Plastic',
+  ),
+  PackageItemVO(
+    id: 'P3',
+    title: 'Chuck Taylor All Star',
+    model: 'CTAS',
+    image: 'chuck_taylor.png',
+    sku: 'CTAS-003',
+    qty: 1,
+    packageType: 'Plastic',
+  ),
+];
+
+final fakeShippingItemList = [
+  ShippingItemVO(
+    id: 'S1',
+    title: 'Chuck Taylor All Star',
+    model: 'CTAS',
+    image: 'chuck_taylor.png',
+    sku: 'CTAS-003',
+    qty: 1,
+    packageType: 'Plastic',
+    shippingType: 'Shipment',
+  ),
+];
 
 final fakeSneakersResponse = SneakersResponse(
   data: [
@@ -146,6 +230,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(FakeHomeSneakersEvent());
     registerFallbackValue(FakeSearchSneakersEvent());
+    registerFallbackValue(FakeCartEvents());
   });
 
   setUp(() {
@@ -436,5 +521,258 @@ void main() {
 
     expect(find.text('Air Max 90'), findsOneWidget);
     expect(find.byIcon(Icons.add_shopping_cart), findsNWidgets(3));
+  });
+
+  //Cart Screen Widgets Tests
+  testWidgets('Display cart list initially on cart screen', (tester) async {
+    when(() => mockCartBloc.state).thenReturn(
+      CartsLoaded(fakeCartList, [], [], 3),
+    );
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(
+            body: CartScreen(),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byType(CartList), findsOneWidget);
+    expect(find.byType(PackageCartList), findsNothing);
+    expect(find.byType(ShippingCartList), findsNothing);
+
+    expect(find.textContaining('Air Max'), findsOneWidget);
+    expect(find.textContaining('Chuck'), findsOneWidget);
+    expect(find.textContaining('Yeezy'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Display package cart list when selection dropdown is selected on package type',
+      (tester) async {
+    whenListen(
+      mockCartBloc,
+      Stream.fromIterable([
+        CartsLoaded(fakeCartList, [], [], 3),
+        CartsLoaded([], fakePackageItemList, [], 2),
+      ]),
+      initialState: CartsLoaded(fakeCartList, [], [], 3),
+    );
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(
+            body: CartScreen(),
+          ),
+        ),
+      ),
+    );
+
+    final ctx = tester.element(find.byType(CartScreen));
+
+    final dropDown = find.byType(DropdownButton<CartType>);
+
+    expect(dropDown, findsOneWidget);
+
+    await tester.tap(dropDown);
+    await tester.pump();
+
+    final packageOption = find.text('Package Cart');
+    expect(packageOption, findsOneWidget);
+    await tester.tap(packageOption);
+    await tester.pump();
+
+    verify(() => mockCartBloc.add(
+          any(
+            that: isA<LoadCart>()
+                .having((e) => e.cartType, 'cartType', CartType.packageCart)
+                .having((e) => e.context, 'context', ctx),
+          ),
+        )).called(1);
+
+    expect(find.byType(PackageCartList), findsOneWidget);
+    expect(find.byType(CartList), findsNothing);
+    expect(find.byType(ShippingCartList), findsNothing);
+
+    expect(find.textContaining('Chuck'), findsOneWidget);
+    expect(find.textContaining('Yeezy'), findsOneWidget);
+    expect(find.textContaining('Air Max'), findsNothing);
+  });
+
+  testWidgets(
+      'Display shipping cart list when selection dropdown is selected on shipping type',
+      (tester) async {
+    whenListen(
+      mockCartBloc,
+      Stream.fromIterable([
+        CartsLoaded(fakeCartList, [], [], 3),
+        CartsLoaded([], [], fakeShippingItemList, 1),
+      ]),
+      initialState: CartsLoaded(fakeCartList, [], [], 3),
+    );
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: const MaterialApp(
+          home: Scaffold(
+            body: CartScreen(),
+          ),
+        ),
+      ),
+    );
+
+    final ctx = tester.element(find.byType(CartScreen));
+
+    final dropDown = find.byType(DropdownButton<CartType>);
+
+    expect(dropDown, findsOneWidget);
+
+    await tester.tap(dropDown);
+    await tester.pump();
+
+    final packageOption = find.text('Shipping Cart');
+    expect(packageOption, findsOneWidget);
+    await tester.tap(packageOption);
+    await tester.pump();
+
+    verify(() => mockCartBloc.add(
+          any(
+            that: isA<LoadCart>()
+                .having((e) => e.cartType, 'cartType', CartType.shippingCart)
+                .having((e) => e.context, 'context', ctx),
+          ),
+        )).called(1);
+
+    expect(find.byType(PackageCartList), findsNothing);
+    expect(find.byType(CartList), findsNothing);
+    expect(find.byType(ShippingCartList), findsOneWidget);
+
+    expect(find.textContaining('Chuck'), findsOneWidget);
+    expect(find.textContaining('Yeezy'), findsNothing);
+    expect(find.textContaining('Air Max'), findsNothing);
+  });
+
+  testWidgets('Card Item renders correctly on cart list', (tester) async {
+    when(() => mockCartBloc.state).thenReturn(
+      CartsLoaded(fakeCartList, [], [], 3),
+    );
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: MaterialApp(
+            home: CartList(
+          cart: fakeCartList,
+        )),
+      ),
+    );
+
+    expect(find.text('Air Max 90'), findsOneWidget);
+    expect(
+        find.byIcon(
+          CupertinoIcons.cube_box_fill,
+        ),
+        findsNWidgets(2));
+    expect(
+        find.byIcon(
+          Icons.local_shipping,
+        ),
+        findsNWidgets(1));
+  });
+
+  testWidgets('Package Item renders correctly on package list', (tester) async {
+    when(() => mockCartBloc.state).thenReturn(
+      CartsLoaded([], fakePackageItemList, [], 2),
+    );
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: MaterialApp(
+            home: PackageCartList(
+          cart: fakePackageItemList,
+        )),
+      ),
+    );
+
+    expect(find.text('Yeezy Boost 350'), findsOneWidget);
+    expect(
+        find.byIcon(
+          Icons.delete,
+        ),
+        findsNWidgets(2));
+
+    expect(find.text('Plastic'), findsNWidgets(2));
+  });
+
+  testWidgets('Shipping Item renders correctly on shipping list',
+      (tester) async {
+    when(() => mockCartBloc.state).thenReturn(
+      CartsLoaded([], [], fakeShippingItemList, 1),
+    );
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: MaterialApp(
+            home: ShippingCartList(
+          cart: fakeShippingItemList,
+        )),
+      ),
+    );
+
+    expect(find.text('Chuck Taylor All Sta ...'), findsOneWidget);
+    expect(
+        find.byIcon(
+          Icons.delete,
+        ),
+        findsOneWidget);
+
+    expect(find.text('Plastic | Shipment'), findsOneWidget);
+  });
+
+  testWidgets('When remove icon is tapped, UI updates for removal',
+      (tester) async {
+    when(() => mockCartBloc.state)
+        .thenReturn(CartsLoaded(fakeCartList, [], [], 3));
+    whenListen(
+      mockCartBloc,
+      Stream.fromIterable([CartsLoaded(fakeCartList, [], [], 3)]),
+    );
+
+    await tester.pumpWidget(
+      MultiBlocProvider(
+        providers: [
+          BlocProvider<CartBloc>.value(value: mockCartBloc),
+        ],
+        child: MaterialApp(
+          home: CartList(cart: fakeCartList),
+        ),
+      ),
+    );
+
+    await tester.pump(const Duration(milliseconds: 1100));
+
+    final deleteButtons = find.byType(IconButton);
+    expect(deleteButtons, findsNWidgets(3));
+
+    await tester.ensureVisible(deleteButtons.at(0));
+    await tester.tap(deleteButtons.at(0), warnIfMissed: false);
+    await tester.pump();
   });
 }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 import 'package:sneakers_app/constants/txt_styles.dart';
+import 'package:sneakers_app/entities/vos/cart_item_vo.dart';
+import 'package:sneakers_app/entities/vos/package_item_vo.dart';
+import 'package:sneakers_app/entities/vos/shipping_item_vo.dart';
 import 'package:sneakers_app/features/cart/presentation/BLoC/cart_bloc.dart';
 import 'package:sneakers_app/features/cart/presentation/BLoC/cart_states.dart';
 import 'package:sneakers_app/features/cart/presentation/widgets/cart_loading_widget.dart';
@@ -72,7 +75,7 @@ class _CartScreenState extends State<CartScreen> {
           return (state.sneakersCart == null)
               ? CartPageLoadingWidget()
               : CartList(
-                  cart: state.sneakersCart!,
+                  cart: state.sneakersCart!.cast<CartItemVO>(),
                 );
         }
 
@@ -122,8 +125,8 @@ class _CartScreenState extends State<CartScreen> {
         if (state is CartLoading) {
           return (state.packageCart == null)
               ? CartPageLoadingWidget()
-              : CartList(
-                  cart: state.packageCart!,
+              : PackageCartList(
+                  cart: state.packageCart!.cast<PackageItemVO>(),
                 );
         }
 
@@ -143,7 +146,7 @@ class _CartScreenState extends State<CartScreen> {
 
         //Success
         if (state is CartsLoaded) {
-          if (state.cart.isEmpty) {
+          if (state.packageCart.isEmpty) {
             return Padding(
               padding: EdgeInsets.only(
                   top: MediaQuery.of(context).size.height * 0.5 - 200),
@@ -157,7 +160,7 @@ class _CartScreenState extends State<CartScreen> {
           }
 
           return PackageCartList(
-            cart: state.cart,
+            cart: state.packageCart,
           );
         }
 
@@ -173,8 +176,8 @@ class _CartScreenState extends State<CartScreen> {
         if (state is CartLoading) {
           return (state.shippingCart == null)
               ? CartPageLoadingWidget()
-              : CartList(
-                  cart: state.shippingCart!,
+              : ShippingCartList(
+                  cart: state.shippingCart!.cast<ShippingItemVO>(),
                 );
         }
 
@@ -194,7 +197,7 @@ class _CartScreenState extends State<CartScreen> {
 
         //Success
         if (state is CartsLoaded) {
-          if (state.cart.isEmpty) {
+          if (state.shippingCart.isEmpty) {
             return Padding(
               padding: EdgeInsets.only(
                   top: MediaQuery.of(context).size.height * 0.5 - 200),
@@ -208,7 +211,7 @@ class _CartScreenState extends State<CartScreen> {
           }
 
           return ShippingCartList(
-            cart: state.cart,
+            cart: state.shippingCart,
           );
         }
 
@@ -246,7 +249,9 @@ class _CartScreenState extends State<CartScreen> {
           onChanged: (CartType? newValue) {
             setState(() {
               selectedValue = newValue!;
-              context.read<CartBloc>().add(LoadCart(cartType: selectedValue, context: context));
+              context
+                  .read<CartBloc>()
+                  .add(LoadCart(cartType: selectedValue, context: context));
             });
           },
         ),

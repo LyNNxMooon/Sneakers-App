@@ -21,7 +21,7 @@ import '../BLoC/cart_events.dart';
 class CartList extends StatelessWidget {
   const CartList({super.key, required this.cart});
 
-  final List cart;
+  final List<CartItemVO> cart;
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +62,16 @@ class CartList extends StatelessWidget {
                   BlocConsumer<CartBloc, CartStates>(
                     builder: (context, state) {
                       if (state is CartLoading) {
-                        return GestureDetector(
-                          onTap: () {},
-                          child: Center(
-                            child: Icon(
-                              Icons.delete,
-                              size: 18,
-                              color: kThirdColor,
-                            ),
-                          ),
-                        );
+                        return CupertinoActivityIndicator();
                       }
 
-                      return GestureDetector(
-                        onTap: () {
+                      return IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                          size: 18,
+                          color: kThirdColor,
+                        ),
+                        onPressed: () {
                           context
                               .read<CartBloc>()
                               .add(RemoveCartEvent(cartItem, null, null));
@@ -83,13 +79,6 @@ class CartList extends StatelessWidget {
                           context.read<CartBloc>().add(LoadCart(
                               cartType: CartType.cart, context: context));
                         },
-                        child: Center(
-                          child: Icon(
-                            Icons.delete,
-                            size: 18,
-                            color: kThirdColor,
-                          ),
-                        ),
                       );
                     },
                     listener: (context, state) {
@@ -231,7 +220,7 @@ class CartList extends StatelessWidget {
 class PackageCartList extends StatelessWidget {
   const PackageCartList({super.key, required this.cart});
 
-  final List cart;
+  final List<PackageItemVO> cart;
 
   @override
   Widget build(BuildContext context) {
@@ -430,7 +419,7 @@ class PackageCartList extends StatelessWidget {
 class ShippingCartList extends StatelessWidget {
   const ShippingCartList({super.key, required this.cart});
 
-  final List cart;
+  final List<ShippingItemVO> cart;
 
   @override
   Widget build(BuildContext context) {
